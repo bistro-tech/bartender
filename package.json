@@ -8,6 +8,8 @@
         "build": "bun build ./src/index.ts --outdir ./out --target bun",
         "format": "prettier -c .",
         "format:fix": "prettier -w .",
+        "lint": "eslint .",
+        "lint:fix": "eslint . --fix",
         "start": "bun run build; bun ./out/index.js"
     },
     "dependencies": {
@@ -16,9 +18,11 @@
     },
     "devDependencies": {
         "@total-typescript/ts-reset": "git+https://github.com/total-typescript/ts-reset.git#b6d0995",
+        "@vic1707/eslint-config": "^7.0.4",
         "@vic1707/prettier": "^3.0.1",
         "@vic1707/tsconfig": "^5.0.3",
         "bun-types": "^1.1.20",
+        "eslint": "^9.7.0",
         "prettier": "^3.3.3"
     },
     "peerDependencies": {

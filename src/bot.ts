@@ -1,0 +1,86 @@
+import type { Command } from '@commands';
+import { COMMANDS_COLLECTION } from '@commands';
+import { EVENTS } from '@events';
+import type { ClientEvents, Collection, OAuth2Guild } from 'discord.js';
+import { Client, GatewayIntentBits, REST, Routes } from 'discord.js';
+
+const BotSymbol = Symbol();
+
+export class Bot extends Client {
+    public readonly COMMANDS: Collection<string, Command> = COMMANDS_COLLECTION;
+
+    private readonly [BotSymbol] = true;
+    static isBot(obj: unknown): obj is Bot {
+        return (obj as Bot)[BotSymbol];
+    }
+
+    constructor(
+        private readonly TOKEN: string,
+        private readonly CLIENT_ID: string,
+    ) {
+        super({
+            intents: [
+                GatewayIntentBits.Guilds,
+                // GatewayIntentBits.GuildMembers,
+                // GatewayIntentBits.GuildModeration,
+                // GatewayIntentBits.GuildEmojisAndStickers,
+                // GatewayIntentBits.GuildIntegrations,
+                // GatewayIntentBits.GuildWebhooks,
+                // GatewayIntentBits.GuildInvites,
+                // GatewayIntentBits.GuildVoiceStates,
+                // GatewayIntentBits.GuildPresences,
+                // GatewayIntentBits.GuildMessages,
+                // GatewayIntentBits.GuildMessageReactions,
+                // GatewayIntentBits.GuildMessageTyping,
+                // GatewayIntentBits.DirectMessages,
+                // GatewayIntentBits.DirectMessageReactions,
+                // GatewayIntentBits.DirectMessageTyping,
+                // GatewayIntentBits.MessageContent,
+                // GatewayIntentBits.GuildScheduledEvents,
+                // GatewayIntentBits.AutoModerationConfiguration,
+                // GatewayIntentBits.AutoModerationExecution,
+                // GatewayIntentBits.GuildMessagePolls,
+                // GatewayIntentBits.DirectMessagePolls
+            ],
+        });
+
+        for (const event of EVENTS) {
+            // because of TS-server skill issues
+            type Listener = (...args: ClientEvents[typeof event.kind]) => Awaitable<void>;
+            if (event.once) {
+                this.once(event.kind, event.execute as Listener);
+            } else {
+                this.on(event.kind, event.execute as Listener);
+            }
+        }
+    }
+
+    public async start(): Promise<void> {
+        await this.login(this.TOKEN);
+        const guilds = await this.guilds.fetch();
+        await this.clearCommands();
+        return this.registerSlashCommands(guilds);
+    }
+
+    private async registerSlashCommands(guilds: Collection<string, OAuth2Guild>): Promise<void> {
+        const rest = new REST().setToken(this.TOKEN);
+        const commands = this.COMMANDS.map((cmd) => cmd.data.toJSON());
+
+        for (const guild of guilds.values()) {
+            await rest.put(Routes.applicationGuildCommands(this.CLIENT_ID, guild.id), { body: commands });
+        }
+    }
+
+    private async clearCommands(): Promise<void> {
+        for (const guild of this.guilds.cache.values()) {
+            for (const command of guild.commands.cache.values()) {
+                await guild.commands.delete(command.id);
+            }
+        }
+
+        const applicationCommands = (await this.application?.commands.fetch()) ?? [];
+        for (const command of applicationCommands.values()) {
+            await command.delete();
+        }
+    }
+}

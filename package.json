@@ -1,0 +1,28 @@
+{
+    "name": "bartender",
+    "module": "src/index.ts",
+    "type": "module",
+    "scripts": {
+        "dev": "bun src/index.ts",
+        "dev:hot": "bun --hot src/index.ts",
+        "build": "bun build ./src/index.ts --outdir ./out --target bun",
+        "format": "prettier -c .",
+        "format:fix": "prettier -w .",
+        "start": "bun run build; bun ./out/index.js"
+    },
+    "dependencies": {
+        "discord.js": "^14.15.3",
+        "valibot": "^0.36.0"
+    },
+    "devDependencies": {
+        "@total-typescript/ts-reset": "git+https://github.com/total-typescript/ts-reset.git#b6d0995",
+        "@vic1707/prettier": "^3.0.1",
+        "@vic1707/tsconfig": "^5.0.3",
+        "bun-types": "^1.1.20",
+        "prettier": "^3.3.3"
+    },
+    "peerDependencies": {
+        "typescript": "^5.5.3"
+    },
+    "prettier": "@vic1707/prettier"
+}

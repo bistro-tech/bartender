@@ -1,0 +1,15 @@
+## JS
+package-lock.json
+dist
+node_modules
+bun.lockb
+
+## CFG files
+.prettierignore
+.gitignore
+.env.example
+.env
+bunfig.toml
+
+## Docker
+Dockerfile

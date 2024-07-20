@@ -1,6 +1,7 @@
 import type { Command } from '@commands';
 import { COMMANDS_COLLECTION } from '@commands';
 import { EVENTS } from '@events';
+import { LOGGER } from '@log';
 import type { ClientEvents, Collection, OAuth2Guild } from 'discord.js';
 import { Client, GatewayIntentBits, REST, Routes } from 'discord.js';
 
@@ -45,6 +46,7 @@ export class Bot extends Client {
         });
 
         for (const event of EVENTS) {
+            void LOGGER.internal.debug(`Registering event '${event.name}'.`);
             // because of TS-server skill issues
             type Listener = (...args: ClientEvents[typeof event.kind]) => Awaitable<void>;
             if (event.once) {
@@ -64,22 +66,29 @@ export class Bot extends Client {
 
     private async registerSlashCommands(guilds: Collection<string, OAuth2Guild>): Promise<void> {
         const rest = new REST().setToken(this.TOKEN);
-        const commands = this.COMMANDS.map((cmd) => cmd.data.toJSON());
+        const commands = this.COMMANDS.each((cmd) =>
+            LOGGER.internal.debug(`Command '${cmd.data.name}' gets registered.`),
+        ).map((cmd) => cmd.data.toJSON());
 
         for (const guild of guilds.values()) {
+            void LOGGER.internal.debug(`Registering commands in '${guild.name}'.`);
             await rest.put(Routes.applicationGuildCommands(this.CLIENT_ID, guild.id), { body: commands });
         }
     }
 
     private async clearCommands(): Promise<void> {
+        void LOGGER.internal.debug(`Clearing all guild commands.`);
         for (const guild of this.guilds.cache.values()) {
+            void LOGGER.internal.debug(`Clearing all commands in guild '${guild.name}'.`);
             for (const command of guild.commands.cache.values()) {
                 await guild.commands.delete(command.id);
             }
         }
 
+        void LOGGER.internal.debug(`Clearing application commands.`);
         const applicationCommands = (await this.application?.commands.fetch()) ?? [];
         for (const command of applicationCommands.values()) {
+            void LOGGER.internal.debug(`Clearing commands '${command.name}'.`);
             await command.delete();
         }
     }

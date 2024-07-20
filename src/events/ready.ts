@@ -1,4 +1,5 @@
 import type { BotEvent } from '@events';
+import { LOGGER } from '@log';
 
 /**
  * @listensTo   - ready
@@ -8,7 +9,5 @@ export const READY: BotEvent = {
     name: 'Ready shoutout',
     kind: 'ready',
     once: true,
-    execute(client) {
-        console.log(`Logged in as ${client.user.tag}!`);
-    },
+    execute: (client) => LOGGER.event.debug(`Logged in as ${client.user.tag}!`),
 };

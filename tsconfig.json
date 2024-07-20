@@ -6,6 +6,7 @@
             "@commands": ["./src/commands"],
             "@env": ["./src/env"],
             "@events": ["./src/events"],
+            "@log": ["./src/log"],
             "@utils/*": ["./src/utils/*"]
         }
     },

@@ -1,0 +1,59 @@
+name: Deploy
+
+on:
+    push:
+        branches:
+            - main
+    workflow_dispatch:
+
+env:
+    SERVER_ID: '687640485984206871'
+    CLIENT_ID: '1264611076054712380'
+    VPS_USER: 'bistro-tech'
+    HOME_DIR: '/home/bistro-tech'
+    DATE: '${{ github.event.repository.updated_at }}'
+    IMG_NAME: '${{ github.event.repository.name }}'
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        environment: deployment
+        steps:
+            - name: checkout
+              uses: actions/checkout@v4
+            - name: build Docker image
+              run: docker build -t ${{ env.IMG_NAME }} .
+            - name: Save Docker image as tar file
+              run: |
+                  mkdir -p ./out
+                  docker save ${{ env.IMG_NAME }} -o ${{ env.IMG_NAME }}.tar
+            - name: Upload Docker image to VPS using ssh
+              uses: easingthemes/ssh-deploy@v5.0.0
+              with:
+                  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+                  REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+                  REMOTE_USER: ${{ env.VPS_USER }}
+                  REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
+                  SOURCE: ${{ env.IMG_NAME }}.tar
+                  TARGET: ${{ env.HOME_DIR }}/${{ env.IMG_NAME }}-${{ env.DATE }}.tar
+                  SCRIPT_BEFORE: |
+                      # ensure linger is on
+                      loginctl enable-linger $USER
+                      systemctl --user enable podman-restart.service
+                      systemctl --user start podman-restart.service
+
+                      # clean up old containers & images
+                      podman stop ${{ env.IMG_NAME }}
+                      podman rm ${{ env.IMG_NAME }}
+                      podman rmi ${{ env.IMG_NAME }}
+                  SCRIPT_AFTER: |
+                      podman load -i ${{ env.HOME_DIR }}-${{ env.DATE }}.tar
+                      podman create \
+                        --network host \
+                        --tz=Europe/Paris \
+                        --name ${{ env.IMG_NAME }} \
+                        --env "TOKEN=${{ secrets.TOKEN }}" \
+                        --env "SERVER_ID=${{ env.SERVER_ID }}" \
+                        --env "CLIENT_ID=${{ env.CLIENT_ID }}" \
+                        --restart always
+                        ${{ env.IMG_NAME }}

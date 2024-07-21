@@ -1,12 +1,14 @@
 import { __LOGGER } from './__logger';
 import type { Loggable } from './loggable';
 import { CommandLog } from './loggable/command';
+import { ContextLog } from './loggable/context';
 import { EventLog } from './loggable/event';
 import { InternalLog } from './loggable/internal';
 import { UnknownLog } from './loggable/unknown';
 
 export const LOGGER = {
     command: buildLogger(CommandLog),
+    context: buildLogger(ContextLog),
     event: buildLogger(EventLog),
     internal: buildLogger(InternalLog),
     unknown: {

@@ -1,5 +1,7 @@
 import type { Command } from '@commands';
 import { COMMANDS_COLLECTION } from '@commands';
+import type { ContextMenu } from '@contextmenus';
+import { CONTEXT_MENUS_COLLECTION } from '@contextmenus';
 import { EVENTS } from '@events';
 import { LOGGER } from '@log';
 import type { ClientEvents, Collection, OAuth2Guild } from 'discord.js';
@@ -9,6 +11,7 @@ const BotSymbol = Symbol();
 
 export class Bot extends Client {
     public readonly COMMANDS: Collection<string, Command> = COMMANDS_COLLECTION;
+    public readonly CONTEXT_MENUS: Collection<string, ContextMenu> = CONTEXT_MENUS_COLLECTION;
 
     private readonly [BotSymbol] = true;
     static isBot(obj: unknown): obj is Bot {
@@ -61,12 +64,25 @@ export class Bot extends Client {
         await this.login(this.TOKEN);
         const guilds = await this.guilds.fetch();
         await this.clearCommands();
-        return this.registerSlashCommands(guilds);
+        await this.registerSlashCommands(guilds);
+        return this.registerContextMenuCommands(guilds);
     }
 
     private async registerSlashCommands(guilds: Collection<string, OAuth2Guild>): Promise<void> {
         const rest = new REST().setToken(this.TOKEN);
         const commands = this.COMMANDS.each((cmd) =>
+            LOGGER.internal.debug(`Command '${cmd.data.name}' gets registered.`),
+        ).map((cmd) => cmd.data.toJSON());
+
+        for (const guild of guilds.values()) {
+            void LOGGER.internal.debug(`Registering commands in '${guild.name}'.`);
+            await rest.put(Routes.applicationGuildCommands(this.CLIENT_ID, guild.id), { body: commands });
+        }
+    }
+
+    private async registerContextMenuCommands(guilds: Collection<string, OAuth2Guild>): Promise<void> {
+        const rest = new REST().setToken(this.TOKEN);
+        const commands = this.CONTEXT_MENUS.each((cmd) =>
             LOGGER.internal.debug(`Command '${cmd.data.name}' gets registered.`),
         ).map((cmd) => cmd.data.toJSON());
 

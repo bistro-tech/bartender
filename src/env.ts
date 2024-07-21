@@ -26,7 +26,28 @@ const ENV_SCHEMA = v.pipeAsync(
                 v.checkAsync((url) => fetch(url).then((r) => r.ok), 'Invalid `WEBHOOK_LOG_URL` url.'),
             ),
         ),
+        // Staging config //
+        STAGING_ALLOWED_ROLES: v.pipe(
+            v.string('Expected `STAGING_ALLOWED_ROLES` to be a string.'),
+            v.regex(/^(?:\d{17,19})(?:,? ?\d{17,19})*$/, 'Expected non-empty list of discord IDs separated by commas.'),
+            v.transform((s) => s.split(/, ?/)),
+        ),
+        STAGING_ALLOWED_CHANNELS: v.pipe(
+            v.string('Expected `STAGING_ALLOWED_CHANNELS` to be a string.'),
+            v.regex(/^(?:\d{17,19})(?:,? ?\d{17,19})*$/, 'Expected non-empty list of discord IDs separated by commas.'),
+            v.transform((s) => s.split(/, ?/)),
+        ),
     }),
+    v.transform((env) => ({
+        CLIENT_ID: env.CLIENT_ID,
+        SERVER_ID: env.SERVER_ID,
+        TOKEN: env.TOKEN,
+        WEBHOOK_LOG_URL: env.WEBHOOK_LOG_URL,
+        STAGING_DEFAULT: {
+            ALLOWED_ROLES: env.STAGING_ALLOWED_ROLES as NonEmptyArray<`${number}`>,
+            ALLOWED_CHANNELS: env.STAGING_ALLOWED_CHANNELS as NonEmptyArray<`${number}`>,
+        },
+    })),
     v.readonly(),
 );
 

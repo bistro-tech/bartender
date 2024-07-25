@@ -4,6 +4,11 @@
 type Awaitable<T> = T | PromiseLike<T>;
 
 /**
+ * Define a non empty Array to T
+ */
+type NonEmptyArray<T> = [T, ...Array<T>];
+
+/**
  * An object or null.
  */
 type Option<T> = T | null;

@@ -9,6 +9,18 @@ type SlashCommandDescriptor =
 
 export type Command = {
     readonly data: SlashCommandDescriptor;
+    readonly options: {
+        readonly permissions?:
+            | {
+                  REQUIRED_ROLE: NonEmptyArray<`${number}`>;
+              }
+            | {
+                  HIGHER_ROLE_THAN: `${number}`;
+              }
+            | {
+                  USERS: NonEmptyArray<`${number}`>;
+              };
+    };
     readonly execute: (interaction: ChatInputCommandInteraction) => Awaitable<unknown>;
 };
 

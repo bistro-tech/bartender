@@ -1,3 +1,4 @@
+import { existsSync } from 'fs';
 import * as v from 'valibot';
 
 v.setGlobalConfig({ abortPipeEarly: true });
@@ -25,6 +26,11 @@ const ENV_SCHEMA = v.pipeAsync(
                 ),
                 v.checkAsync((url) => fetch(url).then((r) => r.ok), 'Invalid `WEBHOOK_LOG_URL` url.'),
             ),
+        ),
+        // Database //
+        DATABASE_FILENAME: v.pipe(
+            v.optional(v.string(), 'bartender-db.sqlite'),
+            v.check((f) => existsSync(f), 'Given filename is supposed to exist.'),
         ),
     }),
     v.readonly(),

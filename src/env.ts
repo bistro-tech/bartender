@@ -26,6 +26,10 @@ const ENV_SCHEMA = v.pipeAsync(
                 v.checkAsync((url) => fetch(url).then((r) => r.ok), 'Invalid `WEBHOOK_LOG_URL` url.'),
             ),
         ),
+        BUMP_NOTIFICATION_ROLE_ID: v.pipe(
+            v.string('Expected `BUMP_NOTIFICATION_ROLE_ID` to be a string.'),
+            v.regex(/^\d{17,19}$/, 'Expected `BUMP_NOTIFICATION_ROLE_ID` to be a discord id.'),
+        ),
     }),
     v.readonly(),
 );

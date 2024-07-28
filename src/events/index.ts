@@ -1,6 +1,7 @@
 import type { ClientEvents } from 'discord.js';
 
 import { COMMAND_HANDLER } from './commandHandler';
+import { MESSAGE_BUMP } from './messageCreateBump';
 import { READY } from './ready';
 
 export type BotEvent = {
@@ -12,4 +13,4 @@ export type BotEvent = {
     };
 }[keyof ClientEvents];
 
-export const EVENTS: Array<BotEvent> = [READY, COMMAND_HANDLER];
+export const EVENTS: Array<BotEvent> = [READY, MESSAGE_BUMP, COMMAND_HANDLER];

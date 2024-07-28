@@ -26,7 +26,10 @@ const ENV_SCHEMA = v.pipeAsync(
                 v.checkAsync((url) => fetch(url).then((r) => r.ok), 'Invalid `WEBHOOK_LOG_URL` url.'),
             ),
         ),
-        MODERATION_CHANNEL_ID: v.pipe(v.string(), v.regex(/^\d{17,19}$/, 'Invalid channel id.')),
+        MODERATION_CHANNEL_ID: v.pipe(
+            v.string('Expected `MODERATION_CHANNEL_ID` to be a string.'),
+            v.regex(/^\d{17,19}$/, 'Expected `MODERATION_CHANNEL_ID` to be a discord id.'),
+        ),
     }),
     v.readonly(),
 );

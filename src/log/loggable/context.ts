@@ -11,7 +11,7 @@ export class ContextLog extends Loggable {
             .setFields([
                 {
                     name: 'Context menu executed',
-                    value: `\`${this.interaction.applicationId}\``,
+                    value: `\`${this.interaction.commandName}\``,
                     inline: false,
                 },
             ])

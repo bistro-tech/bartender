@@ -57,7 +57,6 @@ export const Report: ContextMenu = {
 };
 
 /**
- *
  * @description - Builds a modal for the report command.
  * @param {ContextMenuCommandInteraction} interaction - The interaction to build the modal from.
  * @returns {ModalBuilder} - The built modal.
@@ -80,13 +79,13 @@ function buildModal(interaction: ContextMenuCommandInteraction): ModalBuilder {
  * @param {TextChannel} moderationChannel - The channel to send the embed to.
  * @param {MessageContextMenuCommandInteraction} interaction - The interaction to build the embed from.
  * @param {string} reason - The reason for the report.
- * @returns {Promise<Message<true>>} - A promise that resolves to true if the embed was sent successfully.
+ * @returns {Promise<Message>} - A promise that resolves to true if the embed was sent successfully.
  */
 async function sendReportEmbed(
     moderationChannel: TextChannel,
     interaction: MessageContextMenuCommandInteraction,
     reason: string,
-): Promise<Message<true>> {
+): Promise<Message> {
     const embed = new EmbedBuilder()
         .setTitle('Message signalé')
         .setDescription(interaction.targetMessage.content)

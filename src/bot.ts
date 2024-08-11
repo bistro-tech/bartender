@@ -70,7 +70,7 @@ export class Bot extends Client {
         await this.login(this.TOKEN);
         const guilds = await this.guilds.fetch();
         await this.clearCommands();
-        await this.registerSlashCommands(guilds);
+        return this.registerSlashCommands(guilds);
     }
 
     private async registerSlashCommands(guilds: Collection<string, OAuth2Guild>): Promise<void> {
@@ -80,7 +80,7 @@ export class Bot extends Client {
         ).map((cmd) => cmd.data.toJSON());
 
         const contextMenus: Array<RESTPostAPIContextMenuApplicationCommandsJSONBody> = this.CONTEXT_MENUS.each((cmd) =>
-            LOGGER.internal.debug(`Command '${cmd.data.name}' gets registered.`),
+            LOGGER.internal.debug(`ContextMenus '${cmd.data.name}' gets registered.`),
         ).map((cmd) => cmd.data.toJSON());
 
         for (const guild of guilds.values()) {

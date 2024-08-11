@@ -14,11 +14,12 @@ export const CONTEXT_MENU_HANDLER: BotEvent = {
         if (!interaction.isContextMenuCommand())
             return LOGGER.event.debug(`${interaction.toJSON() as string} is not a context menu.`);
 
-        const command = interaction.client.CONTEXT_MENUS.get(interaction.commandName);
+        const contextMenuHandler = interaction.client.CONTEXT_MENUS.get(interaction.commandName);
 
-        if (!command) return LOGGER.event.debug(`${interaction.commandName}: command not found.`);
+        if (!contextMenuHandler) return LOGGER.event.debug(`${interaction.commandName}: command not found.`);
 
-        await command.execute(interaction);
+        await LOGGER.event.debug(`user ${interaction.user.username} executed '${interaction.commandName}'`);
+        await contextMenuHandler.execute(interaction);
     },
     once: false,
 };

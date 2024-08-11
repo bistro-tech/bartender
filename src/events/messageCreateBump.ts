@@ -13,7 +13,7 @@ export const MESSAGE_BUMP: BotEvent = {
     once: false,
     execute: (message) => {
         if (!message.author.bot) return;
-        if (message.interaction && message.interaction.commandName == 'bump') {
+        if (message.interaction?.commandName == 'bump') {
             setTimeout(async () => {
                 await message.channel.send(`<@&${ENV.BUMP_NOTIFICATION_ROLE_ID}> Il est temps de bump le serveur !`);
             }, TWO_HOURS);

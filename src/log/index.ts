@@ -25,6 +25,6 @@ function buildLogger<T extends Constructor<Loggable>>(Loggable: T) {
         info: (...args: Parameters): Promise<void> => __LOGGER.log(new Loggable('INFO', ...args)),
         warn: (...args: Parameters): Promise<void> => __LOGGER.log(new Loggable('WARN', ...args)),
         error: (...args: Parameters): Promise<void> => __LOGGER.log(new Loggable('ERROR', ...args)),
-        fatal: (...args: Parameters): Promise<void> => __LOGGER.log(new Loggable('FATAL', ...args)),
+        fatal: (...args: Parameters): Promise<never> => __LOGGER.exiting_log(new Loggable('FATAL', ...args)),
     } as const;
 }

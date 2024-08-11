@@ -63,6 +63,7 @@ jobs:
                           --env "TOKEN=${{ secrets.TOKEN }}" \
                           --env "SERVER_ID=${{ env.SERVER_ID }}" \
                           --env "CLIENT_ID=${{ env.CLIENT_ID }}" \
+                          --env "WEBHOOK_LOG_URL=${{ secrets.WEBHOOK_LOG_URL }}" \
                           --env "BUMP_NOTIFICATION_ROLE_ID=${{ env.BUMP_NOTIFICATION_ROLE_ID }}" \
                           --restart always \
                           ${{ env.IMG_NAME }}

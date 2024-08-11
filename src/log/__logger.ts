@@ -35,10 +35,11 @@ class Logger {
                     flags: loggable.quiet ? [MessageFlags.SuppressNotifications] : [],
                 });
         }
+    }
 
-        if (loggable.severity === 'FATAL') {
-            process.exit(0);
-        }
+    public async exiting_log(loggable: Loggable): Promise<never> {
+        await this.log(loggable);
+        return process.exit(1);
     }
 }
 

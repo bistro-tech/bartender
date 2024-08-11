@@ -1,0 +1,32 @@
+name: Check env Changes
+
+on:
+    pull_request:
+        branches:
+            - main
+
+jobs:
+    check-env-changes:
+        runs-on: ubuntu-latest
+        permissions:
+            pull-requests: write
+        steps:
+            - uses: actions/checkout@v4.1.7
+            - name: Check if env related files were modified
+              id: check_files
+              uses: tj-actions/changed-files@v44.5.7
+              with:
+                  files: |
+                      src/env.ts
+                      .env.example
+                      .github/workflows/Deploy.yml
+            # Delete functionality can be added once https://github.com/thollander/actions-comment-pull-request/pull/371 is merged
+            - name: Post a reminder comment
+              if: steps.check_files.outputs.any_changed == 'true'
+              uses: thollander/actions-comment-pull-request@v2.5.0
+              with:
+                  message: |
+                      🚨 **Reminder:** An env related file has been modified.
+                      Please ensure all relevant files are updated accordingly.
+                      If the added env variable is a secret, ask the owners to add it to the deployment environment.
+                      In most cases you need to update `src/env.ts` and `.env.example` once, and `.github/workflows/Deploy.yml` once if the value is a secret or twice if public.

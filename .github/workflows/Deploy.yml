@@ -15,6 +15,7 @@ env:
     IMG_NAME: '${{ github.event.repository.name }}'
     IMG_ARCH: arm64
     TZ: Europe/Paris
+    MODERATION_CHANNEL_ID: '1272323179464884345'
 
 jobs:
     deploy:

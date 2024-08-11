@@ -1,4 +1,4 @@
-FROM oven/bun:alpine as BUILDER
+FROM docker.io/oven/bun:alpine as BUILDER
 
 WORKDIR /builder
 
@@ -8,16 +8,12 @@ RUN bun install
 RUN bun run build
 
 #############################################
-FROM oven/bun:alpine
+FROM docker.io/oven/bun:alpine
 
 USER nobody
 
 WORKDIR /app
 
 COPY --from=BUILDER /builder/out/index.js .
-
-ARG TOKEN
-ARG CLIENT_ID
-ARG SERVER_ID
 
 CMD ["bun", "index.js"]

@@ -11,49 +11,56 @@ env:
     CLIENT_ID: '1264611076054712380'
     VPS_USER: 'bistro-tech'
     HOME_DIR: '/home/bistro-tech'
-    DATE: '${{ github.event.repository.updated_at }}'
     IMG_NAME: '${{ github.event.repository.name }}'
+    IMG_ARCH: arm64
+    TZ: Europe/Paris
 
 jobs:
     deploy:
         runs-on: ubuntu-latest
         environment: deployment
         steps:
-            - name: checkout
-              uses: actions/checkout@v4
-            - name: build Docker image
-              run: docker build -t ${{ env.IMG_NAME }} .
-            - name: Save Docker image as tar file
+            - uses: actions/checkout@v4.1.7
+            - name: Install QEMU
+              run: sudo apt-get install -y qemu-user-static
+            - name: Save the current date
+              id: date
+              run: echo "DATE=$(TZ=${{ env.TZ }} date '+%F-%Hh%Mm%Ss')" >> $GITHUB_OUTPUT
+            - name: Build container image
               run: |
-                  mkdir -p ./out
-                  docker save ${{ env.IMG_NAME }} -o ${{ env.IMG_NAME }}.tar
+                  podman build --arch arm64 -t ${{ env.IMG_NAME }} .
+                  podman save ${{ env.IMG_NAME }} -o ${{ env.IMG_NAME }}.tar
             - name: Upload Docker image to VPS using ssh
-              uses: easingthemes/ssh-deploy@v5.0.0
+              uses: easingthemes/ssh-deploy@v5.1.0
               with:
                   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
                   REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
                   REMOTE_USER: ${{ env.VPS_USER }}
                   REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
                   SOURCE: ${{ env.IMG_NAME }}.tar
-                  TARGET: ${{ env.HOME_DIR }}/${{ env.IMG_NAME }}-${{ env.DATE }}.tar
+                  TARGET: ${{ env.HOME_DIR }}/${{ env.IMG_NAME }}-${{ steps.date.outputs.DATE }}.tar
                   SCRIPT_BEFORE: |
                       # ensure linger is on
                       loginctl enable-linger $USER
-                      systemctl --user enable podman-restart.service
-                      systemctl --user start podman-restart.service
+                      if ! systemctl --user is-enabled podman-restart.service > /dev/null; then
+                          systemctl --user enable podman-restart.service
+                          systemctl --user start podman-restart.service
+                      fi
 
-                      # clean up old containers & images
-                      podman stop ${{ env.IMG_NAME }}
-                      podman rm ${{ env.IMG_NAME }}
-                      podman rmi ${{ env.IMG_NAME }}
+                      # clean up old containers & images if container already here
+                      if podman ps -a --filter "name=${{ env.IMG_NAME }}" --format '{{.Names}}' | grep -q "^${{ env.IMG_NAME }}$"; then
+                          podman stop ${{ env.IMG_NAME }}
+                          podman rm ${{ env.IMG_NAME }}
+                          podman rmi ${{ env.IMG_NAME }}
+                      fi
                   SCRIPT_AFTER: |
-                      podman load -i ${{ env.HOME_DIR }}-${{ env.DATE }}.tar
-                      podman create \
-                        --network host \
-                        --tz=Europe/Paris \
-                        --name ${{ env.IMG_NAME }} \
-                        --env "TOKEN=${{ secrets.TOKEN }}" \
-                        --env "SERVER_ID=${{ env.SERVER_ID }}" \
-                        --env "CLIENT_ID=${{ env.CLIENT_ID }}" \
-                        --restart always
-                        ${{ env.IMG_NAME }}
+                      podman load -i ${{ env.IMG_NAME }}-${{ steps.date.outputs.DATE }}.tar
+                      podman run \
+                          --detach \
+                          --tz=${{ env.TZ }} \
+                          --name ${{ env.IMG_NAME }} \
+                          --env "TOKEN=${{ secrets.TOKEN }}" \
+                          --env "SERVER_ID=${{ env.SERVER_ID }}" \
+                          --env "CLIENT_ID=${{ env.CLIENT_ID }}" \
+                          --restart always \
+                          ${{ env.IMG_NAME }}

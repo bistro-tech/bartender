@@ -9,6 +9,7 @@ on:
 env:
     SERVER_ID: '687640485984206871'
     CLIENT_ID: '1264611076054712380'
+    BUMP_NOTIFICATION_ROLE_ID: '1272223052176031806'
     VPS_USER: 'bistro-tech'
     HOME_DIR: '/home/bistro-tech'
     IMG_NAME: '${{ github.event.repository.name }}'

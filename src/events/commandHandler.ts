@@ -13,8 +13,7 @@ export const COMMAND_HANDLER: BotEvent = {
     once: false,
     async execute(interaction) {
         if (!Bot.isBot(interaction.client)) return LOGGER.event.fatal('Client is not a Bot. WTF?');
-        if (!interaction.isCommand())
-            return LOGGER.event.debug(`'${interactionTypeToString(interaction.type)}' is not a command.`);
+        if (!interaction.isCommand()) return;
 
         const {
             commandName,

@@ -11,12 +11,10 @@ export const CONTEXT_MENU_HANDLER: BotEvent = {
     kind: 'interactionCreate',
     async execute(interaction) {
         if (!Bot.isBot(interaction.client)) return LOGGER.event.fatal('Client is not a Bot. WTF?');
-        if (!interaction.isContextMenuCommand())
-            return LOGGER.event.debug(`${interaction.toJSON() as string} is not a context menu.`);
-
+        if (!interaction.isContextMenuCommand()) return;
         const contextMenuHandler = interaction.client.CONTEXT_MENUS.get(interaction.commandName);
 
-        if (!contextMenuHandler) return LOGGER.event.debug(`${interaction.commandName}: command not found.`);
+        if (!contextMenuHandler) return LOGGER.event.debug(`${interaction.commandName}: context menu not found.`);
 
         await LOGGER.event.debug(`user ${interaction.user.username} executed '${interaction.commandName}'`);
         await contextMenuHandler.execute(interaction);

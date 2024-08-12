@@ -1,14 +1,23 @@
 import type { Command } from '@commands';
 import { COMMANDS_COLLECTION } from '@commands';
+import type { ContextMenu } from '@contextmenus';
+import { CONTEXT_MENUS_COLLECTION } from '@contextmenus';
 import { EVENTS } from '@events';
 import { LOGGER } from '@log';
-import type { ClientEvents, Collection, OAuth2Guild } from 'discord.js';
+import type {
+    ClientEvents,
+    Collection,
+    OAuth2Guild,
+    RESTPostAPIApplicationCommandsJSONBody,
+    RESTPostAPIContextMenuApplicationCommandsJSONBody,
+} from 'discord.js';
 import { Client, GatewayIntentBits, REST, Routes } from 'discord.js';
 
 const BotSymbol = Symbol();
 
 export class Bot extends Client {
     public readonly COMMANDS: Collection<string, Command> = COMMANDS_COLLECTION;
+    public readonly CONTEXT_MENUS: Collection<string, ContextMenu> = CONTEXT_MENUS_COLLECTION;
 
     private readonly [BotSymbol] = true;
     static isBot(obj: unknown): obj is Bot {
@@ -66,13 +75,19 @@ export class Bot extends Client {
 
     private async registerSlashCommands(guilds: Collection<string, OAuth2Guild>): Promise<void> {
         const rest = new REST().setToken(this.TOKEN);
-        const commands = this.COMMANDS.each((cmd) =>
+        const commands: Array<RESTPostAPIApplicationCommandsJSONBody> = this.COMMANDS.each((cmd) =>
             LOGGER.internal.debug(`Command '${cmd.data.name}' gets registered.`),
+        ).map((cmd) => cmd.data.toJSON());
+
+        const contextMenus: Array<RESTPostAPIContextMenuApplicationCommandsJSONBody> = this.CONTEXT_MENUS.each((cmd) =>
+            LOGGER.internal.debug(`ContextMenus '${cmd.data.name}' gets registered.`),
         ).map((cmd) => cmd.data.toJSON());
 
         for (const guild of guilds.values()) {
             void LOGGER.internal.debug(`Registering commands in '${guild.name}'.`);
-            await rest.put(Routes.applicationGuildCommands(this.CLIENT_ID, guild.id), { body: commands });
+            await rest.put(Routes.applicationGuildCommands(this.CLIENT_ID, guild.id), {
+                body: commands.concat(contextMenus),
+            });
         }
     }
 

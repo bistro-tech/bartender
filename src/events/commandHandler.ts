@@ -1,7 +1,6 @@
 import { Bot } from '@bot';
 import type { BotEvent } from '@events';
 import { LOGGER } from '@log';
-import { interactionTypeToString } from '@utils/discord';
 
 /**
  * @listensTo   - interactionCreate

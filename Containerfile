@@ -4,7 +4,7 @@ WORKDIR /builder
 
 COPY . .
 
-RUN bun install
+RUN bun install --frozen-lockfile
 RUN bun run build
 
 #############################################

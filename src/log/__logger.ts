@@ -12,34 +12,28 @@ class Logger {
         if (WEBHOOK_URL) {
             this.WebHookClient = new WebhookClient({ url: WEBHOOK_URL });
         } else {
-            // ok to void since no webhook will be sent
-            void this.log(new InternalLog('DEBUG', 'Webhook logging is disabled.'));
+            this.log(new InternalLog('DEBUG', 'Webhook logging is disabled.'));
         }
     }
 
-    public async log(loggable: Loggable): Promise<void> {
+    public log(loggable: Loggable): void {
         const now = new Date();
         // eslint-disable-next-line no-console -- only allowed console.log
         console.log(
             `${loggable.console_color}[${now.toLocaleDateString()}, ${now.toLocaleTimeString().padStart(11)} - ${loggable.severity.padStart(5)} - ${loggable.kind.padStart(8)}] - ${loggable.message}${ConsoleColor.Reset}`,
         );
-
-        switch (loggable.severity) {
-            case 'DEBUG':
-                break;
-            case 'INFO':
-            case 'WARN':
-            case 'ERROR':
-            case 'FATAL':
-                await this.WebHookClient?.send({
-                    embeds: [loggable.toEmbed()],
-                    flags: loggable.quiet ? [MessageFlags.SuppressNotifications] : [],
-                });
-        }
     }
 
-    public async exiting_log(loggable: Loggable): Promise<never> {
-        await this.log(loggable);
+    public async notifiant_log(loggable: Loggable): Promise<void> {
+        this.log(loggable);
+        await this.WebHookClient?.send({
+            embeds: [loggable.toEmbed()],
+            flags: loggable.quiet ? [MessageFlags.SuppressNotifications] : [],
+        });
+    }
+
+    public exiting_log(loggable: Loggable): never {
+        this.log(loggable);
         return process.exit(1);
     }
 }

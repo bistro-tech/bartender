@@ -24,7 +24,7 @@ export const COMMAND_HANDLER: BotEvent = {
         const command = interaction.client.COMMANDS.get(commandName);
         if (!command) return LOGGER.event.debug(`${commandName}: command not found.`);
 
-        await LOGGER.event.debug(`user ${user} executed '${interaction.toString()}'`);
+        LOGGER.event.debug(`user ${user} executed '${interaction.toString()}'`);
         await command.execute(interaction);
     },
 };

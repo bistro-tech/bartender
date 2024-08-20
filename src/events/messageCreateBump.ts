@@ -16,7 +16,7 @@ export const MESSAGE_BUMP: BotEvent = {
         if (!message.author.bot) return;
         if (message.interaction?.commandName != 'bump') return;
 
-        void LOGGER.event.debug(`Next bump reminder at ${new Date(new Date().getTime() + TWO_HOURS).toLocaleString()}`);
+        LOGGER.event.debug(`Next bump reminder at ${new Date(new Date().getTime() + TWO_HOURS).toLocaleString()}`);
         setTimeout(async () => {
             await message.channel.send(`<@&${ENV.BUMP_NOTIFICATION_ROLE_ID}> Il est temps de bump le serveur !`);
         }, TWO_HOURS);

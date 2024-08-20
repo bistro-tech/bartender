@@ -1,6 +1,7 @@
 import { Bot } from '@bot';
 import type { BotEvent } from '@events';
 import { LOGGER } from '@log';
+import { formatUser } from '@utils/format-user';
 
 /**
  * @listensTo   - interactionCreate
@@ -14,11 +15,8 @@ export const COMMAND_HANDLER: BotEvent = {
         if (!Bot.isBot(interaction.client)) return LOGGER.event.fatal('Client is not a Bot. WTF?');
         if (!interaction.isCommand()) return;
 
-        const {
-            commandName,
-            user: { id: userID, tag: userTag },
-        } = interaction;
-        const user = `${userTag}(${userID})`;
+        const { commandName, user: discord_user } = interaction;
+        const user = formatUser(discord_user);
 
         if (!interaction.inGuild()) return LOGGER.event.error(`'${commandName}' not executed in a guild by ${user}.`);
         if (!interaction.isChatInputCommand()) return LOGGER.event.debug(`'${commandName}' is not a command.`);

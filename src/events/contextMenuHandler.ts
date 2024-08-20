@@ -1,6 +1,7 @@
 import { Bot } from '@bot';
 import type { BotEvent } from '@events';
 import { LOGGER } from '@log';
+import { formatUser } from '@utils/format-user';
 
 /**
  * @listensTo   - interactionCreate
@@ -16,7 +17,7 @@ export const CONTEXT_MENU_HANDLER: BotEvent = {
 
         if (!contextMenuHandler) return LOGGER.event.debug(`${interaction.commandName}: context menu not found.`);
 
-        await LOGGER.event.debug(`user ${interaction.user.username} executed '${interaction.commandName}'`);
+        await LOGGER.event.debug(`user ${formatUser(interaction.user)} executed '${interaction.commandName}'`);
         await contextMenuHandler.execute(interaction);
     },
     once: false,

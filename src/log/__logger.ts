@@ -18,9 +18,10 @@ class Logger {
     }
 
     public async log(loggable: Loggable): Promise<void> {
+        const now = new Date();
         // eslint-disable-next-line no-console -- only allowed console.log
         console.log(
-            `${loggable.console_color}[${new Date().toLocaleString()} - ${loggable.severity.padStart(5)} - ${loggable.kind.padStart(8)}] - ${loggable.message}${ConsoleColor.Reset}`,
+            `${loggable.console_color}[${now.toLocaleDateString()}, ${now.toLocaleTimeString().padStart(11)} - ${loggable.severity.padStart(5)} - ${loggable.kind.padStart(8)}] - ${loggable.message}${ConsoleColor.Reset}`,
         );
 
         switch (loggable.severity) {

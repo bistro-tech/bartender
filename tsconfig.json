@@ -7,6 +7,7 @@
 			"@contextmenus": ["./src/contextMenus"],
 			"@db": ["./src/db"],
 			"@db/schema": ["./src/db/schema"],
+			"@db/enums/*": ["./src/db/enums/*"],
 			"@env": ["./src/env"],
 			"@events": ["./src/events"],
 			"@log": ["./src/log"],

@@ -13,3 +13,6 @@ bunfig.toml
 
 ## Docker
 Dockerfile
+
+## Database schema (special case)
+docs/assets/database-schema.svg

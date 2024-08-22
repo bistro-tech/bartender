@@ -14,15 +14,20 @@
 	},
 	"dependencies": {
 		"discord.js": "^14.15.3",
+		"drizzle-orm": "^0.33.0",
 		"valibot": "0.39.0"
 	},
 	"devDependencies": {
+		"@softwaretechnik/dbml-renderer": "^1.0.30",
 		"@total-typescript/ts-reset": "^0.6.0",
 		"@vic1707/eslint-config": "^7.1.1",
 		"@vic1707/prettier": "^4.0.1",
 		"@vic1707/tsconfig": "^5.0.5",
 		"bun-types": "^1.1.26",
+		"drizzle-dbml-generator": "^0.9.0",
+		"drizzle-kit": "^0.24.2",
 		"eslint": "^9.9.1",
+		"eslint-plugin-drizzle": "^0.2.3",
 		"prettier": "^3.3.3"
 	},
 	"peerDependencies": {

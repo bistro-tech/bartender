@@ -1,16 +1,17 @@
 import * as v from 'valibot';
-
 v.setGlobalConfig({ abortPipeEarly: true });
+
+const DISCORD_ID_RE = /^\d{17,19}$/;
 
 const ENV_SCHEMA = v.pipeAsync(
     v.objectAsync({
         CLIENT_ID: v.pipe(
             v.string('Expected `CLIENT_ID` to be a string.'),
-            v.regex(/^\d{17,19}$/, 'Expected `CLIENT_ID` to be a discord id.'),
+            v.regex(DISCORD_ID_RE, 'Expected `CLIENT_ID` to be a discord id.'),
         ),
         SERVER_ID: v.pipe(
             v.string('Expected `SERVEUR_ID` to be a string.'),
-            v.regex(/^\d{17,19}$/, 'Expected `SERVEUR_ID` to be a discord id.'),
+            v.regex(DISCORD_ID_RE, 'Expected `SERVEUR_ID` to be a discord id.'),
         ),
         TOKEN: v.pipe(
             v.string('Expected `TOKEN` to be a string.'),
@@ -28,11 +29,11 @@ const ENV_SCHEMA = v.pipeAsync(
         ),
         BUMP_NOTIFICATION_ROLE_ID: v.pipe(
             v.string('Expected `BUMP_NOTIFICATION_ROLE_ID` to be a string.'),
-            v.regex(/^\d{17,19}$/, 'Expected `BUMP_NOTIFICATION_ROLE_ID` to be a discord id.'),
+            v.regex(DISCORD_ID_RE, 'Expected `BUMP_NOTIFICATION_ROLE_ID` to be a discord id.'),
         ),
         MODERATION_CHANNEL_ID: v.pipe(
             v.string('Expected `MODERATION_CHANNEL_ID` to be a string.'),
-            v.regex(/^\d{17,19}$/, 'Invalid channel id.'),
+            v.regex(DISCORD_ID_RE, 'Invalid channel id.'),
         ),
     }),
     v.readonly(),

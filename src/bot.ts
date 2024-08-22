@@ -55,7 +55,7 @@ export class Bot extends Client {
         });
 
         for (const event of EVENTS) {
-            void LOGGER.internal.debug(`Registering event '${event.name}'.`);
+            LOGGER.internal.debug(`Registering event '${event.name}'.`);
             // because of TS-server skill issues
             type Listener = (...args: ClientEvents[typeof event.kind]) => Awaitable<void>;
             if (event.once) {
@@ -84,7 +84,7 @@ export class Bot extends Client {
         ).map((cmd) => cmd.data.toJSON());
 
         for (const guild of guilds.values()) {
-            void LOGGER.internal.debug(`Registering commands in '${guild.name}'.`);
+            LOGGER.internal.debug(`Registering commands in '${guild.name}'.`);
             await rest.put(Routes.applicationGuildCommands(this.CLIENT_ID, guild.id), {
                 body: commands.concat(contextMenus),
             });
@@ -92,18 +92,18 @@ export class Bot extends Client {
     }
 
     private async clearCommands(): Promise<void> {
-        void LOGGER.internal.debug(`Clearing all guild commands.`);
+        LOGGER.internal.debug(`Clearing all guild commands.`);
         for (const guild of this.guilds.cache.values()) {
-            void LOGGER.internal.debug(`Clearing all commands in guild '${guild.name}'.`);
+            LOGGER.internal.debug(`Clearing all commands in guild '${guild.name}'.`);
             for (const command of guild.commands.cache.values()) {
                 await guild.commands.delete(command.id);
             }
         }
 
-        void LOGGER.internal.debug(`Clearing application commands.`);
+        LOGGER.internal.debug(`Clearing application commands.`);
         const applicationCommands = (await this.application?.commands.fetch()) ?? [];
         for (const command of applicationCommands.values()) {
-            void LOGGER.internal.debug(`Clearing commands '${command.name}'.`);
+            LOGGER.internal.debug(`Clearing commands '${command.name}'.`);
             await command.delete();
         }
     }

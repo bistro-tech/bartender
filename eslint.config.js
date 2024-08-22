@@ -15,6 +15,7 @@ export default [
                 },
             ],
             'no-console': 'error',
+            '@typescript-eslint/no-confusing-void-expression': 'off',
         },
     },
 ];

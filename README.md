@@ -15,7 +15,7 @@ Bartender is a Discord bot created for the discord server `Bistro Tech`. The goa
 git clone git@github.com:bistro-tech/bartender.git
 
 # Install dependencies
-bun install
+bun install --frozen-lockfile
 ```
 
 ### Configuration

@@ -14,19 +14,19 @@
     },
     "dependencies": {
         "discord.js": "^14.15.3",
-        "valibot": "^0.36.0"
+        "valibot": "^0.38.0"
     },
     "devDependencies": {
         "@total-typescript/ts-reset": "git+https://github.com/total-typescript/ts-reset.git#b6d0995",
         "@vic1707/eslint-config": "^7.0.4",
         "@vic1707/prettier": "^3.0.1",
         "@vic1707/tsconfig": "^5.0.3",
-        "bun-types": "^1.1.20",
-        "eslint": "^9.7.0",
+        "bun-types": "^1.1.24",
+        "eslint": "^9.9.0",
         "prettier": "^3.3.3"
     },
     "peerDependencies": {
-        "typescript": "^5.5.3"
+        "typescript": "^5.5.4"
     },
     "prettier": "@vic1707/prettier"
 }

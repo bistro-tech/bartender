@@ -1,0 +1,39 @@
+name: Ensure Database Schema Consistency
+
+on:
+    pull_request:
+        branches:
+            - main
+        types:
+            - opened
+            - reopened
+            - synchronize
+            - ready_for_review
+
+jobs:
+    check-db-schema:
+        if: ${{ !github.event.pull_request.draft }}
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4.1.7
+            - uses: oven-sh/setup-bun@v2.0.1
+            - name: Install dependencies
+              run: bun install
+
+            - name: Run dbml.ts to generate the database schema SVG
+              run: bun dbml.ts
+
+            - name: Check if database-dbml.svg is in a dirty state
+              run: git diff --exit-code ./docs/assets/database-schema.svg
+              continue-on-error: true
+              id: diff-check
+
+            - name: Fail if database-dbml.svg is different
+              if: steps.diff-check.outcome == 'failure'
+              run: |
+                  echo "The generated database-dbml.svg is different from the committed version. Please commit the updated SVG."
+                  exit 1
+
+            - name: Success message
+              if: steps.diff-check.outcome == 'success'
+              run: echo "The database-dbml.svg file is up-to-date."

@@ -1,3 +1,4 @@
+import { existsSync, writeFileSync } from 'fs';
 import * as v from 'valibot';
 v.setGlobalConfig({ abortPipeEarly: true });
 
@@ -34,6 +35,15 @@ const ENV_SCHEMA = v.pipeAsync(
 		MODERATION_CHANNEL_ID: v.pipe(
 			v.string('Expected `MODERATION_CHANNEL_ID` to be a string.'),
 			v.regex(DISCORD_ID_RE, 'Invalid channel id.'),
+		),
+		/* Database */
+		DATABASE_FILENAME: v.pipe(
+			v.string(),
+			// Ensures the file exists
+			v.check((f) => {
+				if (!existsSync(f) && f !== ':memory:') writeFileSync(f, '');
+				return true;
+			}),
 		),
 	}),
 	v.readonly(),

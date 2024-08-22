@@ -1,5 +1,6 @@
 import * as schema from '@db/schema';
 import { ENV } from '@env';
+import { LOGGER } from '@log';
 import { Database } from 'bun:sqlite';
 import { drizzle } from 'drizzle-orm/bun-sqlite';
 import { migrate } from 'drizzle-orm/bun-sqlite/migrator';
@@ -32,7 +33,13 @@ sqlite.run(`
 `);
 
 // Create the drizzle connector
-const DB = drizzle(sqlite, { schema });
+const DB = drizzle(sqlite, {
+	schema,
+	logger: {
+		logQuery: (query, params) =>
+			LOGGER.internal.debug(params.length ? `${query} with params (${params.toString()})` : query),
+	},
+});
 
 // Run migrations
 migrate(DB, { migrationsFolder: './migrations' });

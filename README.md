@@ -1,6 +1,6 @@
 # Bartender
 
-Bartender is a Discord bot created for the discord server `Bistro Tech`. The goal of this bot is to manage the server and to provide some useful tools for the members.
+Bartender is a Discord bot created for the discord server [Bistro Tech](https://discord.gg/bistro-tech-687640485984206871). The goal of this bot is to manage the server and to provide some useful tools for the members.
 
 ## Usage
 

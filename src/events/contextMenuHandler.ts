@@ -2,6 +2,7 @@ import { Bot } from '@bot';
 import type { BotEvent } from '@events';
 import { LOGGER } from '@log';
 import { formatUser } from '@utils/format-user';
+import { isErr, tri } from '@utils/tri';
 
 /**
  * @listensTo   - interactionCreate
@@ -18,7 +19,16 @@ export const CONTEXT_MENU_HANDLER: BotEvent = {
         if (!contextMenuHandler) return LOGGER.event.debug(`${interaction.commandName}: context menu not found.`);
 
         LOGGER.event.debug(`user ${formatUser(interaction.user)} executed '${interaction.commandName}'`);
-        await contextMenuHandler.execute(interaction);
+
+        const maybeErr = tri(() => contextMenuHandler.execute(interaction));
+        if (isErr(maybeErr)) {
+            const reply = interaction.replied
+                ? interaction.editReply.bind(interaction)
+                : interaction.reply.bind(interaction);
+            // @ts-expect-error assume that err has a .toString() despite being an unknown type
+            await LOGGER.context.error(interaction, maybeErr.err);
+            await reply(`There was an unhandled error. Please check the logs.`);
+        }
     },
     once: false,
 };

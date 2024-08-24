@@ -27,7 +27,7 @@ export const COMMAND_HANDLER: BotEvent = {
 
         LOGGER.event.debug(`user ${user} executed '${interaction.toString()}'`);
 
-        const maybeErr = tri(() => command.execute(interaction));
+        const maybeErr = await tri(() => command.execute(interaction));
         if (isErr(maybeErr)) {
             const reply = interaction.replied
                 ? interaction.editReply.bind(interaction)

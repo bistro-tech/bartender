@@ -20,7 +20,7 @@ export const CONTEXT_MENU_HANDLER: BotEvent = {
 
         LOGGER.event.debug(`user ${formatUser(interaction.user)} executed '${interaction.commandName}'`);
 
-        const maybeErr = tri(() => contextMenuHandler.execute(interaction));
+        const maybeErr = await tri(() => contextMenuHandler.execute(interaction));
         if (isErr(maybeErr)) {
             const reply = interaction.replied
                 ? interaction.editReply.bind(interaction)

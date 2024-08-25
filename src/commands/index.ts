@@ -9,7 +9,7 @@ type SlashCommandDescriptor =
 
 export type Command = {
     readonly data: SlashCommandDescriptor;
-    readonly execute: (interaction: ChatInputCommandInteraction) => Awaitable<unknown>;
+    readonly execute: (interaction: ChatInputCommandInteraction) => Promise<unknown>;
 };
 
 export const COMMANDS_COLLECTION = new Collection([PING].map((c) => [c.data.name, c]));

@@ -1,6 +1,7 @@
 import type { ContextMenu } from '@contextmenus';
 import { ENV } from '@env';
 import { LOGGER } from '@log';
+import { userToPing } from '@utils/discord-formats';
 import type {
 	ContextMenuCommandInteraction,
 	Message,
@@ -98,7 +99,7 @@ async function sendReportEmbed(
 		.setTimestamp(interaction.targetMessage.createdTimestamp);
 
 	return moderationChannel.send({
-		content: `<@${interaction.user.id}> a signalé ce message ${interaction.targetMessage.url}.\n>>> ${reason}`,
+		content: `${userToPing(interaction.user)} a signalé ce message ${interaction.targetMessage.url}.\n>>> ${reason}`,
 		embeds: [embed],
 	});
 }

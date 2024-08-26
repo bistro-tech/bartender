@@ -1,6 +1,7 @@
 import { ENV } from '@env';
 import type { BotEvent } from '@events';
 import { LOGGER } from '@log';
+import { roleIDToPing } from '@utils/discord-formats';
 
 const TWO_HOURS = 7_200_000;
 
@@ -18,7 +19,9 @@ export const MESSAGE_BUMP: BotEvent = {
 
 		LOGGER.event.debug(`Next bump reminder at ${new Date(new Date().getTime() + TWO_HOURS).toLocaleString()}`);
 		setTimeout(async () => {
-			await message.channel.send(`<@&${ENV.BUMP_NOTIFICATION_ROLE_ID}> Il est temps de bump le serveur !`);
+			await message.channel.send(
+				`${roleIDToPing(ENV.BUMP_NOTIFICATION_ROLE_ID)} Il est temps de bump le serveur !`,
+			);
 		}, TWO_HOURS);
 	},
 };

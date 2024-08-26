@@ -8,6 +8,7 @@
 			"@env": ["./src/env"],
 			"@events": ["./src/events"],
 			"@log": ["./src/log"],
+			"@log/utils": ["./src/log/utils"],
 			"@utils/*": ["./src/utils/*"]
 		}
 	},

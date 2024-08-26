@@ -1,14 +1,10 @@
-import type { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import type { ChatInputCommandInteraction, SlashCommandOptionsOnlyBuilder } from 'discord.js';
 import { Collection } from 'discord.js';
 
 import { PING } from './ping';
 
-type SlashCommandDescriptor =
-	| SlashCommandBuilder
-	| StrictOmit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>;
-
 export type Command = {
-	readonly data: SlashCommandDescriptor;
+	readonly data: SlashCommandOptionsOnlyBuilder;
 	readonly execute: (interaction: ChatInputCommandInteraction) => Promise<unknown>;
 };
 

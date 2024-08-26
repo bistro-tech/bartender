@@ -1,7 +1,7 @@
 import { Bot } from '@bot';
 import type { BotEvent } from '@events';
 import { LOGGER } from '@log';
-import { formatUser } from '@utils/format-user';
+import { formatUser } from '@log/utils';
 import { isErr, tri } from '@utils/tri';
 
 /**

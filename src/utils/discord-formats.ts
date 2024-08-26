@@ -1,8 +1,8 @@
 import type { GuildChannel, GuildEmoji, Role, User } from 'discord.js';
 
 // Dates
-export const DatetoDiscordDate = (date: Date): string => `<t:${date.getTime()}:R>`;
-export const DateTStoDiscordDate = (timestamp: number): string => `<t:${timestamp}:R>`;
+export const DatetoDiscordDate = (date: Date): string => `<t:${date.getTime() / 1000}:R>`;
+export const DateTStoDiscordDate = (timestamp_sec: number): string => `<t:${timestamp_sec}:R>`;
 // User pings
 export const userToPing = (user: User): string => `<@${user.id}>`;
 export const userIDToPing = (id: string): string => `<@${id}>`;

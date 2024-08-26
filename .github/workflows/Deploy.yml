@@ -4,6 +4,12 @@ on:
     push:
         branches:
             - main
+        paths:
+            - src/**
+            - .github/workflows/**
+            - Containerfile
+            - package.json
+            - tsconfig.json
     workflow_dispatch:
 
 env:

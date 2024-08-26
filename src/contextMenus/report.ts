@@ -43,19 +43,19 @@ export const Report: ContextMenu = {
 			reasonModalSubmit.fields.getTextInputValue('report_reason'),
 		);
 
-        return reportEmbed
-            .then(() => {
-                LOGGER.event.debug(`Reported message : '${interaction.targetMessage.url}'`);
+		return reportEmbed
+			.then(() => {
+				LOGGER.event.debug(`Reported message : '${interaction.targetMessage.url}'`);
 
-                return reasonModalSubmit.reply({
-                    content: 'Message signalé.',
-                    ephemeral: true,
-                });
-            })
-            .catch((_) => {
-                return logErrorAndReply(interaction, `Erreur lors de l'envoi du signalement.`);
-            });
-    },
+				return reasonModalSubmit.reply({
+					content: 'Message signalé.',
+					ephemeral: true,
+				});
+			})
+			.catch((_) => {
+				return logErrorAndReply(interaction, `Erreur lors de l'envoi du signalement.`);
+			});
+	},
 };
 
 /**

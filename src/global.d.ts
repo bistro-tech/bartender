@@ -24,7 +24,7 @@ type Constructor<TReturn> = new (...args: any) => TReturn;
  * Makes the hover overlay more readable.
  */
 type Prettify<T> = {
-    [K in keyof T]: T[K];
+	[K in keyof T]: T[K];
 } & NonNullable<unknown>;
 
 /////////////////////////////////////////////////////
@@ -34,10 +34,10 @@ type Prettify<T> = {
  * Returns a union type with all methods key names.
  */
 type MethodsKeyNames<T> = Exclude<
-    {
-        [K in keyof T]: T[K] extends Fn ? K : never;
-    }[keyof T],
-    undefined
+	{
+		[K in keyof T]: T[K] extends Fn ? K : never;
+	}[keyof T],
+	undefined
 >;
 
 /**
@@ -49,20 +49,20 @@ type PropsKeyNames<T> = keyof StrictOmit<T, MethodsKeyNames<T>>;
  * Returns a union type with all non nullable members.
  */
 type NonNullMembersNames<T> = Exclude<
-    {
-        [K in keyof T]: null extends T[K] ? never : K;
-    }[keyof T],
-    undefined
+	{
+		[K in keyof T]: null extends T[K] ? never : K;
+	}[keyof T],
+	undefined
 >;
 
 /**
  * Returns a union type with all non undefined members.
  */
 type NonOptionnalMembersNames<T> = Exclude<
-    {
-        [K in keyof T]: undefined extends T[K] ? never : K;
-    }[keyof T],
-    undefined
+	{
+		[K in keyof T]: undefined extends T[K] ? never : K;
+	}[keyof T],
+	undefined
 >;
 
 /////////////////////////////////////////////////////

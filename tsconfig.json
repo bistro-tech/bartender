@@ -1,15 +1,15 @@
 {
-    "extends": "@vic1707/tsconfig/bun.json",
-    "compilerOptions": {
-        "paths": {
-            "@bot": ["./src/bot"],
-            "@commands": ["./src/commands"],
-            "@contextmenus": ["./src/contextMenus"],
-            "@env": ["./src/env"],
-            "@events": ["./src/events"],
-            "@log": ["./src/log"],
-            "@utils/*": ["./src/utils/*"]
-        }
-    },
-    "include": ["src", "eslint.config.js"]
+	"extends": "@vic1707/tsconfig/bun.json",
+	"compilerOptions": {
+		"paths": {
+			"@bot": ["./src/bot"],
+			"@commands": ["./src/commands"],
+			"@contextmenus": ["./src/contextMenus"],
+			"@env": ["./src/env"],
+			"@events": ["./src/events"],
+			"@log": ["./src/log"],
+			"@utils/*": ["./src/utils/*"]
+		}
+	},
+	"include": ["src", "eslint.config.js"]
 }

@@ -12,21 +12,22 @@ export function tri<T, E>(fn: () => T): Result<T, E>;
  * @returns {Awaitable<Result<T>>} - The result or an error object.
  */
 export function tri<T, E>(fn: () => Awaitable<T>): Awaitable<Result<T, E>> {
-    try {
-        const res = fn();
-        if (isPromise(res)) {
-            return res.catch((err: E) => ({ [ERROR]: true, err }));
-        }
-        return res;
-    } catch (err) {
-        return {
-            [ERROR]: true,
-            err: err as E,
-        };
-    }
+	try {
+		const res = fn();
+		if (isPromise(res)) {
+			return res.catch((err: E) => ({ [ERROR]: true, err }));
+		}
+		return res;
+	} catch (err) {
+		return {
+			[ERROR]: true,
+			err: err as E,
+		};
+	}
 }
 // @ts-expect-error The problematic part is the "never"
 // it's here to prevent passing a Promise type, ensuring it's not a valid argument
 // passing a Promise triggers a compile error.
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 export const isErr = <R, E>(err: R extends Promise<unknown> ? never : R): err is Err<E> => !!(err as Err<E>)[ERROR];
 const isPromise = <T>(obj: Awaitable<T>): obj is Promise<T> => !!(obj as Promise<T>).then;

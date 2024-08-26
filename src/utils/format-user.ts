@@ -6,5 +6,5 @@ import type { User } from 'discord.js';
  * @returns {string} String representation of the user
  */
 export function formatUser({ id: userID, tag: userTag }: User): string {
-    return `${userTag}(${userID})`;
+	return `${userTag}(${userID})`;
 }

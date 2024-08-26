@@ -20,7 +20,7 @@ export const COMMAND_HANDLER: BotEvent = {
 		const user = formatUser(discord_user);
 
 		if (!interaction.inGuild()) return LOGGER.event.error(`'${commandName}' not executed in a guild by ${user}.`);
-		if (!interaction.isChatInputCommand()) return LOGGER.event.debug(`'${commandName}' is not a command.`);
+		if (!interaction.isChatInputCommand()) return;
 
 		const command = interaction.client.COMMANDS.get(commandName);
 		if (!command) return LOGGER.event.debug(`${commandName}: command not found.`);

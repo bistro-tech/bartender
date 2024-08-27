@@ -2,6 +2,8 @@ import type { Command } from '@commands';
 import { DB } from '@db';
 import { type BLAME_KIND, blameKindEmote } from '@db/enums/blame-kind';
 import { blame } from '@db/schema';
+import { LOGGER } from '@log';
+import { formatUser } from '@log/utils';
 import { dateToDiscordDate, userIDToPing, userToPing } from '@utils/discord-formats';
 import { arrayChunks, mapGenerator } from '@utils/generators';
 import { type APIEmbedField, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
@@ -26,6 +28,11 @@ export const LIST_BLAMES: Command = {
 		),
 	async execute(interaction) {
 		const user = interaction.options.getUser('other_user', false) ?? interaction.user;
+
+		LOGGER.command.debug(
+			interaction,
+			`${formatUser(interaction.user)} asked for the blames of ${formatUser(user)}.`,
+		);
 
 		const userBlames = await DB.select()
 			.from(blame)
@@ -58,6 +65,8 @@ export const LIST_BLAMES: Command = {
 				new EmbedBuilder().setDescription(`Historique de ${userToPing(user)}`).addFields(fields),
 			),
 		);
+
+		LOGGER.command.debug(interaction, `Blames summary of ${formatUser(user)}: ${blamesSummary}.`);
 
 		return interaction.reply({
 			content: `Résumé: ${userBlames.length} blames; ${blamesSummary}`,

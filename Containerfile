@@ -15,5 +15,6 @@ USER nobody
 WORKDIR /app
 
 COPY --from=BUILDER /builder/out/index.js .
+COPY ./migrations migrations
 
 CMD ["bun", "index.js"]

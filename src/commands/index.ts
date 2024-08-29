@@ -1,15 +1,12 @@
-import type { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import type { ChatInputCommandInteraction, SlashCommandOptionsOnlyBuilder } from 'discord.js';
 import { Collection } from 'discord.js';
 
+import { LIST_BLAMES } from './list-blames';
 import { PING } from './ping';
 
-type SlashCommandDescriptor =
-	| SlashCommandBuilder
-	| StrictOmit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>;
-
 export type Command = {
-	readonly data: SlashCommandDescriptor;
+	readonly data: SlashCommandOptionsOnlyBuilder;
 	readonly execute: (interaction: ChatInputCommandInteraction) => Promise<unknown>;
 };
 
-export const COMMANDS_COLLECTION = new Collection([PING].map((c) => [c.data.name, c]));
+export const COMMANDS_COLLECTION = new Collection([PING, LIST_BLAMES].map((c) => [c.data.name, c]));

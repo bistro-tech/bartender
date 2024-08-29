@@ -47,8 +47,11 @@ jobs:
                   REMOTE_USER: ${{ env.VPS_USER }}
                   REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
                   SOURCE: ${{ env.IMG_NAME }}.tar
-                  TARGET: ${{ env.HOME_DIR }}/${{ env.IMG_NAME }}-${{ steps.date.outputs.DATE }}.tar
+                  TARGET: ${{ env.HOME_DIR }}/bartender-builds/${{ env.IMG_NAME }}-${{ steps.date.outputs.DATE }}.tar
                   SCRIPT_BEFORE: |
+                      # make sure builds folder exists
+                      mkdir ${{ env.HOME_DIR }}/bartender-builds
+
                       # ensure linger is on
                       loginctl enable-linger $USER
                       if ! systemctl --user is-enabled podman-restart.service > /dev/null; then
@@ -63,7 +66,7 @@ jobs:
                           podman rmi ${{ env.IMG_NAME }}
                       fi
                   SCRIPT_AFTER: |
-                      podman load -i ${{ env.IMG_NAME }}-${{ steps.date.outputs.DATE }}.tar
+                      podman load -i ${{ env.HOME_DIR }}/bartender-builds/${{ env.IMG_NAME }}-${{ steps.date.outputs.DATE }}.tar
                       podman run \
                           --detach \
                           --tz=${{ env.TZ }} \

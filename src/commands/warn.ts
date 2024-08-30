@@ -37,28 +37,28 @@ export const WARN: Command = {
 		),
 	async execute(interaction) {
 		const reason = interaction.options.getString('reason', true);
-		const blamee = interaction.options.getUser('user', true);
-		const blamer = interaction.user;
+		const warned = interaction.options.getUser('user', true);
+		const issuer = interaction.user;
 
-		if (blamee.id === blamer.id) {
-			await LOGGER.command.warn(interaction, `${blamer.displayName} tried to warn himself, what an moron.`);
+		if (warned.id === issuer.id) {
+			await LOGGER.command.warn(interaction, `${issuer.displayName} tried to warn himself, what an moron.`);
 			return interaction.reply("You can't warn yourself.");
 		}
 
 		await DB.insert(discord_user)
-			.values({ id: blamee.id, display_name: blamee.displayName })
-			.onConflictDoUpdate({ target: discord_user.id, set: { display_name: blamee.displayName } })
+			.values({ id: warned.id, display_name: warned.displayName })
+			.onConflictDoUpdate({ target: discord_user.id, set: { display_name: warned.displayName } })
 			.returning({ id: discord_user.id });
 
 		await DB.insert(blame).values({
-			blamee_id: blamee.id,
-			blamer_id: blamer.id,
+			blamee_id: warned.id,
+			blamer_id: issuer.id,
 			reason,
 			kind: 'WARN',
 		});
 
 		return interaction.reply(`
-			${userToPing(blamee)} tu viens d'être warn par ${userToPing(blamer)} pour la raison suivante:
+			${userToPing(warned)} tu viens d'être warn par ${userToPing(issuer)} pour la raison suivante:
 			> ${reason}
 			Tache de faire mieux la prochaine fois.
 		`);

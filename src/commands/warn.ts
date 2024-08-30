@@ -2,7 +2,9 @@ import type { Command } from '@commands';
 import { DB } from '@db';
 import { blame, discord_user } from '@db/schema';
 import { LOGGER } from '@log';
+import { formatUser } from '@log/utils';
 import { userToPing } from '@utils/discord-formats';
+import { isErr, tri } from '@utils/tri';
 import { SlashCommandBuilder } from 'discord.js';
 
 /**
@@ -45,18 +47,30 @@ export const WARN: Command = {
 			return interaction.reply("You can't warn yourself.");
 		}
 
-		await DB.insert(discord_user)
-			.values({ id: warned.id, display_name: warned.displayName })
-			.onConflictDoUpdate({ target: discord_user.id, set: { display_name: warned.displayName } })
-			.returning({ id: discord_user.id });
+		const creationUserErr = await tri(() =>
+			DB.insert(discord_user)
+				.values({ id: warned.id, display_name: warned.displayName })
+				.onConflictDoUpdate({ target: discord_user.id, set: { display_name: warned.displayName } }),
+		);
+		if (isErr(creationUserErr)) {
+			await LOGGER.command.error(interaction, `Failed to create user ${formatUser(warned)}.`);
+			return interaction.reply("Une erreur est survenue lors de la création de l'utilisateur warned en DB.");
+		}
 
-		await DB.insert(blame).values({
-			blamee_id: warned.id,
-			blamer_id: issuer.id,
-			reason,
-			kind: 'WARN',
-		});
+		const creationBlameErr = await tri(() =>
+			DB.insert(blame).values({
+				blamee_id: warned.id,
+				blamer_id: issuer.id,
+				reason,
+				kind: 'WARN',
+			}),
+		);
+		if (isErr(creationBlameErr)) {
+			await LOGGER.command.error(interaction, `Failed to blame user ${formatUser(warned)}`);
+			return interaction.reply('Une erreur est survenue lors de la création du WARN en DB.');
+		}
 
+		LOGGER.command.debug(interaction, `${formatUser(warned)} got warned for '${reason}'.`);
 		return interaction.reply(`
 			${userToPing(warned)} tu viens d'être warn par ${userToPing(issuer)} pour la raison suivante:
 			> ${reason}

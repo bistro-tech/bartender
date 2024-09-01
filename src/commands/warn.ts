@@ -42,9 +42,25 @@ export const WARN: Command = {
 		const warned = interaction.options.getUser('user', true);
 		const issuer = interaction.user;
 
+		LOGGER.command.debug(
+			interaction,
+			`${formatUser(issuer)} tries to warn ${formatUser(warned)} because: '${reason}'.`,
+		);
+
 		if (warned.id === issuer.id) {
 			await LOGGER.command.warn(interaction, `${issuer.displayName} tried to warn himself, what an moron.`);
 			return interaction.reply("You can't warn yourself.");
+		}
+
+		if (warned.bot) {
+			await LOGGER.command.warn(interaction, `${issuer.displayName} tried to warn a bot, what an moron.`);
+			return interaction.reply("You can't warn a bot.");
+		}
+
+		const member = await interaction.guild?.members.fetch(warned.id);
+		if (member?.permissions.has('Administrator')) {
+			await LOGGER.command.warn(interaction, `${issuer.displayName} tried to warn an admin, what an moron.`);
+			return interaction.reply('An admin is always perfect, I dare you to think otherwise.');
 		}
 
 		const creationUserErr = await tri(() =>

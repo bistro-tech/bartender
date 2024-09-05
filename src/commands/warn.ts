@@ -69,7 +69,11 @@ export const WARN: Command = {
 				.onConflictDoUpdate({ target: discord_user.id, set: { display_name: warned.displayName } }),
 		);
 		if (isErr(creationUserErr)) {
-			await LOGGER.command.error(interaction, `Failed to create user ${formatUser(warned)}.`);
+			await LOGGER.command.error(
+				interaction,
+				// eslint-disable-next-line @typescript-eslint/restrict-template-expressions -- drizzle errors implements .toString().
+				`Failed to create user ${formatUser(warned)}.\n > ${creationUserErr.err} \n\`\`\`\n${JSON.stringify(creationUserErr.err)}\n\`\`\``,
+			);
 			return interaction.reply("Une erreur est survenue lors de la création de l'utilisateur warned en DB.");
 		}
 
@@ -82,7 +86,11 @@ export const WARN: Command = {
 			}),
 		);
 		if (isErr(creationBlameErr)) {
-			await LOGGER.command.error(interaction, `Failed to blame user ${formatUser(warned)}`);
+			await LOGGER.command.error(
+				interaction,
+				// eslint-disable-next-line @typescript-eslint/restrict-template-expressions -- drizzle errors implements .toString().
+				`Failed to blame user ${formatUser(warned)}.\n > ${creationBlameErr.err} \n\`\`\`\n${JSON.stringify(creationBlameErr.err)}\n\`\`\``,
+			);
 			return interaction.reply('Une erreur est survenue lors de la création du WARN en DB.');
 		}
 

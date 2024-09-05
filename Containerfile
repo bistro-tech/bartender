@@ -1,4 +1,4 @@
-FROM docker.io/oven/bun:alpine as BUILDER
+FROM docker.io/oven/bun:1.1.26-alpine as BUILDER
 
 WORKDIR /builder
 
@@ -8,7 +8,7 @@ RUN bun install --frozen-lockfile
 RUN bun run build
 
 #############################################
-FROM docker.io/oven/bun:alpine
+FROM docker.io/oven/bun:1.1.26-alpine
 
 USER nobody
 

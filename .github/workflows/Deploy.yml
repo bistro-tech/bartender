@@ -39,7 +39,7 @@ jobs:
             - name: Build container image
               run: |
                   podman build --arch arm64 -t ${{ env.IMG_NAME }} .
-                  podman save ${{ env.IMG_NAME }} -o ${{ env.IMG_NAME }}.tar
+                  podman save ${{ env.IMG_NAME }} --format oci-archive -o ${{ env.IMG_NAME }}.tar
             - name: Upload Docker image to VPS using ssh
               uses: easingthemes/ssh-deploy@v5.1.0
               with:

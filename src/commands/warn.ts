@@ -63,16 +63,20 @@ export const WARN: Command = {
 			return interaction.reply('An admin is always perfect, I dare you to think otherwise.');
 		}
 
-		const creationUserErr = await tri(() =>
+		// ensure both issuer and warned exist in DB.
+		const creationUsersErr = await tri(() =>
 			DB.insert(discord_user)
-				.values({ id: warned.id, display_name: warned.displayName })
+				.values([
+					{ id: warned.id, display_name: warned.displayName },
+					{ id: issuer.id, display_name: issuer.displayName },
+				])
 				.onConflictDoUpdate({ target: discord_user.id, set: { display_name: warned.displayName } }),
 		);
-		if (isErr(creationUserErr)) {
+		if (isErr(creationUsersErr)) {
 			await LOGGER.command.error(
 				interaction,
 				// eslint-disable-next-line @typescript-eslint/restrict-template-expressions -- drizzle errors implements .toString().
-				`Failed to create user ${formatUser(warned)}.\n > ${creationUserErr.err} \n\`\`\`\n${JSON.stringify(creationUserErr.err)}\n\`\`\``,
+				`Failed to create user ${formatUser(warned)}.\n > ${creationUsersErr.err} \n\`\`\`\n${JSON.stringify(creationUsersErr.err)}\n\`\`\``,
 			);
 			return interaction.reply("Une erreur est survenue lors de la création de l'utilisateur warned en DB.");
 		}

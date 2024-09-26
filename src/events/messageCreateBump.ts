@@ -2,6 +2,7 @@ import { ENV } from '@env';
 import type { BotEvent } from '@events';
 import { LOGGER } from '@log';
 import { roleIDToPing } from '@utils/discord-formats';
+import { InteractionType } from 'discord.js';
 
 import { BOOT_NOTIFICATION_SETTINGS } from './readyBumpRecover';
 
@@ -17,7 +18,16 @@ export const MESSAGE_BUMP: BotEvent = {
 	once: false,
 	execute: (message) => {
 		if (!message.author.bot) return;
-		if (message.interaction?.commandName != 'bump') return;
+		if (!message.interactionMetadata) return;
+		if (
+			message.interactionMetadata.type !== InteractionType.ApplicationCommand &&
+			message.interactionMetadata.type !== InteractionType.ApplicationCommandAutocomplete
+		)
+			return;
+		const [replyEmbed] = message.embeds;
+		if (!replyEmbed) return;
+		if (!replyEmbed.title?.startsWith('DISBOARD')) return;
+		if (!replyEmbed.description?.startsWith('Bump effectué !')) return;
 
 		// Disable on boot notification if it didn't already happen
 		BOOT_NOTIFICATION_SETTINGS.should = false;

@@ -4,6 +4,7 @@ import { COMMAND_HANDLER } from './commandHandler';
 import { CONTEXT_MENU_HANDLER } from './contextMenuHandler';
 import { MESSAGE_BUMP } from './messageCreateBump';
 import { READY } from './ready';
+import { READY_BUMP_RECOVER } from './readyBumpRecover';
 
 export type BotEvent = {
 	[Event in keyof ClientEvents]: {
@@ -14,4 +15,4 @@ export type BotEvent = {
 	};
 }[keyof ClientEvents];
 
-export const EVENTS: Array<BotEvent> = [READY, MESSAGE_BUMP, COMMAND_HANDLER, CONTEXT_MENU_HANDLER];
+export const EVENTS: Array<BotEvent> = [READY, MESSAGE_BUMP, COMMAND_HANDLER, CONTEXT_MENU_HANDLER, READY_BUMP_RECOVER];

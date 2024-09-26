@@ -1,4 +1,9 @@
-import { StringSelectMenuOptionBuilder } from 'discord.js';
+import {
+	ActionRowBuilder,
+	type MessageCreateOptions,
+	StringSelectMenuBuilder,
+	StringSelectMenuOptionBuilder,
+} from 'discord.js';
 
 export const TICKET_MENU_ID = 'TICKET_KIND_SELECTOR';
 export const TICKET_KIND = ['PARTNER', 'PROBLEM', 'APPLY', 'OTHER'] as const;
@@ -28,3 +33,25 @@ export const TiketKindStringSelectOption = (kind: TICKET_KIND): StringSelectMenu
 				.setValue(kind);
 	}
 };
+
+export const TicketMenuMessage = {
+	content: `
+		Nous sommes la pour t'aider,
+		Pour quelle raison souhaites-tu ouvrir un ticket?
+	`,
+	components: [
+		new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
+			new StringSelectMenuBuilder()
+				.setCustomId(TICKET_MENU_ID)
+				.setPlaceholder('Choisis le type de ticket!')
+				.addOptions(
+					...TICKET_KIND.map(TiketKindStringSelectOption),
+					// Special case for those who think tickets are for help.
+					new StringSelectMenuOptionBuilder()
+						.setLabel('HELP')
+						.setValue('HELP')
+						.setDescription("J'ai besoin d'aide pour du code/mon pc etc..."),
+				),
+		),
+	],
+} as const satisfies MessageCreateOptions;

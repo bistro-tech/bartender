@@ -4,6 +4,7 @@
 		"paths": {
 			"@bot": ["./src/bot"],
 			"@commands": ["./src/commands"],
+			"@collectors": ["./src/collectors"],
 			"@contextmenus": ["./src/contextMenus"],
 			"@db": ["./src/db"],
 			"@db/schema": ["./src/db/schema"],

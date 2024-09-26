@@ -17,6 +17,8 @@ env:
     CLIENT_ID: '1264611076054712380'
     BUMP_CHANNEL_ID: '1272453433172955180'
     BUMP_NOTIFICATION_ROLE_ID: '1272223052176031806'
+    TICKET_INIT_CHANNEL_ID: '1288800573004578868'
+    TICKET_CATEGORY_ID: '1258774148637917225'
     VPS_USER: 'bistro-tech'
     HOME_DIR: '/home/bistro-tech'
     IMG_NAME: '${{ github.event.repository.name }}'
@@ -84,6 +86,8 @@ jobs:
                           --env "TOKEN=${{ secrets.TOKEN }}" \
                           --env "SERVER_ID=${{ env.SERVER_ID }}" \
                           --env "CLIENT_ID=${{ env.CLIENT_ID }}" \
+                          --env "TICKET_INIT_CHANNEL_ID=${{ env.TICKET_INIT_CHANNEL_ID }}" \
+                          --env "TICKET_CATEGORY_ID=${{ env.TICKET_CATEGORY_ID }}" \
                           --env "WEBHOOK_LOG_URL=${{ secrets.WEBHOOK_LOG_URL }}" \
                           --env "BUMP_CHANNEL_ID=${{ env.BUMP_CHANNEL_ID }}" \
                           --env "BUMP_NOTIFICATION_ROLE_ID=${{ env.BUMP_NOTIFICATION_ROLE_ID }}" \

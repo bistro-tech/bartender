@@ -32,6 +32,10 @@ const ENV_SCHEMA = v.pipeAsync(
 			v.string('Expected `BUMP_NOTIFICATION_ROLE_ID` to be a string.'),
 			v.regex(DISCORD_ID_RE, 'Expected `BUMP_NOTIFICATION_ROLE_ID` to be a discord id.'),
 		),
+		BUMP_CHANNEL_ID: v.pipe(
+			v.string('Expected `BUMP_CHANNEL_ID` to be a string.'),
+			v.regex(DISCORD_ID_RE, 'Expected `BUMP_CHANNEL_ID` to be a discord id.'),
+		),
 		MODERATION_CHANNEL_ID: v.pipe(
 			v.string('Expected `MODERATION_CHANNEL_ID` to be a string.'),
 			v.regex(DISCORD_ID_RE, 'Invalid channel id.'),

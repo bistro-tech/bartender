@@ -1,6 +1,7 @@
 import type { Collector } from '@collectors';
 import { ENV } from '@env';
 import { LOGGER } from '@log';
+import { formatUser } from '@log/utils';
 import { channelToPing } from '@utils/discord-formats';
 import { type TICKET_KIND, TICKET_MENU_ID } from '@utils/tickets';
 import { ChannelType, ComponentType, OverwriteType } from 'discord.js';
@@ -33,10 +34,13 @@ export const CREATE_TICKET: Collector = {
 
 		// <kind>-<username>-<3 random char> => because users can create multiple tickets at the same time
 		const ticketName = `${kind.toLowerCase()}-${interaction.user.username}-${Math.random().toString(36).slice(2, 5)}`;
+		LOGGER.internal.debug(`user ${formatUser(interaction.member.user)} requested the creation of ${ticketName}.`);
+
 		const ticketChannel = await ticketCategory.children.create({
 			name: ticketName,
 			type: ChannelType.GuildText,
 		});
+
 		await ticketChannel.permissionOverwrites.edit(
 			interaction.member,
 			{

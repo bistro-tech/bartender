@@ -17,7 +17,7 @@ export const MESSAGE_BUMP: BotEvent = {
 	name: 'Message create bump',
 	kind: 'messageCreate',
 	once: false,
-	execute: (message) => {
+	execute: async (message) => {
 		if (!message.author.bot) return;
 		if (message.author.id !== DISBOARD_BOT_ID) return;
 		if (!message.interactionMetadata) return;
@@ -26,7 +26,10 @@ export const MESSAGE_BUMP: BotEvent = {
 			message.interactionMetadata.type !== InteractionType.ApplicationCommandAutocomplete
 		)
 			return;
-		const [replyEmbed] = message.embeds;
+		// fetches the complete message, else embed is empty
+		const m = await message.fetch(true);
+		LOGGER.event.debug(JSON.stringify(m));
+		const [replyEmbed] = m.embeds;
 		if (!replyEmbed) return;
 		if (!replyEmbed.title?.startsWith('DISBOARD')) return;
 		if (!replyEmbed.description?.startsWith('Bump effectué !')) return;

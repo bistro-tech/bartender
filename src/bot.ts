@@ -1,3 +1,4 @@
+import { type Collector, COLLECTORS_COLLECTION } from '@collectors';
 import type { Command } from '@commands';
 import { COMMANDS_COLLECTION } from '@commands';
 import type { ContextMenu } from '@contextmenus';
@@ -18,6 +19,7 @@ const BotSymbol = Symbol();
 export class Bot extends Client {
 	public readonly COMMANDS: Collection<string, Command> = COMMANDS_COLLECTION;
 	public readonly CONTEXT_MENUS: Collection<string, ContextMenu> = CONTEXT_MENUS_COLLECTION;
+	public readonly COLLECTORS: Collection<string, Collector> = COLLECTORS_COLLECTION;
 
 	private readonly [BotSymbol] = true;
 	static isBot(obj: unknown): obj is Bot {

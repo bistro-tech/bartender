@@ -40,6 +40,14 @@ const ENV_SCHEMA = v.pipeAsync(
 			v.string('Expected `MODERATION_CHANNEL_ID` to be a string.'),
 			v.regex(DISCORD_ID_RE, 'Invalid channel id.'),
 		),
+		TICKET_INIT_CHANNEL_ID: v.pipe(
+			v.string('Expected `TICKET_INIT_CHANNEL_ID` to be a string.'),
+			v.regex(DISCORD_ID_RE, 'Invalid channel id.'),
+		),
+		TICKET_CATEGORY_ID: v.pipe(
+			v.string('Expected `TICKET_CATEGORY_ID` to be a string.'),
+			v.regex(DISCORD_ID_RE, 'Invalid category id.'),
+		),
 		/* Database */
 		DATABASE_FILENAME: v.pipe(
 			v.string(),

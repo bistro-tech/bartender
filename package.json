@@ -13,9 +13,9 @@
 		"start": "bun run build; bun ./out/index.js"
 	},
 	"dependencies": {
-		"discord.js": "14.16.1",
+		"discord.js": "14.16.2",
 		"drizzle-orm": "0.33.0",
-		"valibot": "0.41.0"
+		"valibot": "0.42.1"
 	},
 	"devDependencies": {
 		"@softwaretechnik/dbml-renderer": "1.0.30",
@@ -23,15 +23,15 @@
 		"@vic1707/eslint-config": "7.1.1",
 		"@vic1707/prettier": "4.0.1",
 		"@vic1707/tsconfig": "5.0.5",
-		"bun-types": "1.1.26",
+		"bun-types": "1.1.29",
 		"drizzle-dbml-generator": "0.9.0",
 		"drizzle-kit": "0.24.2",
-		"eslint": "9.9.1",
+		"eslint": "9.11.1",
 		"eslint-plugin-drizzle": "0.2.3",
 		"prettier": "3.3.3"
 	},
 	"peerDependencies": {
-		"typescript": "^5.5.4"
+		"typescript": "^5.6.2"
 	},
 	"prettier": "@vic1707/prettier"
 }

@@ -7,6 +7,7 @@ import { InteractionType } from 'discord.js';
 import { BOOT_NOTIFICATION_SETTINGS } from './readyBumpRecover';
 
 export const BUMP_COOLDOWN = 7_200_000; // Two hours
+const DISBOARD_BOT_ID = '302050872383242240';
 
 /**
  * @listensTo   - messageCreate
@@ -18,6 +19,7 @@ export const MESSAGE_BUMP: BotEvent = {
 	once: false,
 	execute: (message) => {
 		if (!message.author.bot) return;
+		if (message.author.id !== DISBOARD_BOT_ID) return;
 		if (!message.interactionMetadata) return;
 		if (
 			message.interactionMetadata.type !== InteractionType.ApplicationCommand &&

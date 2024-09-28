@@ -97,7 +97,9 @@ export class Bot extends Client {
 		LOGGER.internal.debug(`Clearing all guild commands.`);
 		for (const guild of this.guilds.cache.values()) {
 			LOGGER.internal.debug(`Clearing all commands in guild '${guild.name}'.`);
-			for (const command of guild.commands.cache.values()) {
+			const commands = await guild.commands.fetch();
+			for (const command of commands.values()) {
+				LOGGER.internal.debug(`Clearing command '${command.name}'.`);
 				await guild.commands.delete(command.id);
 			}
 		}

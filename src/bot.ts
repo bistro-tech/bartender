@@ -107,7 +107,7 @@ export class Bot extends Client {
 		LOGGER.internal.debug(`Clearing application commands.`);
 		const applicationCommands = (await this.application?.commands.fetch()) ?? [];
 		for (const command of applicationCommands.values()) {
-			LOGGER.internal.debug(`Clearing commands '${command.name}'.`);
+			LOGGER.internal.debug(`Clearing command '${command.name}'.`);
 			await command.delete();
 		}
 	}

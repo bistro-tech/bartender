@@ -1,13 +1,13 @@
+import { Bot } from '@bot';
 import type { ContextMenu } from '@contextmenus';
-import { ENV } from '@env';
 import { LOGGER } from '@log';
 import { userToPing } from '@utils/discord-formats';
 import type {
 	ContextMenuCommandInteraction,
+	GuildTextBasedChannel,
 	Message,
 	MessageContextMenuCommandInteraction,
 	ModalActionRowComponentBuilder,
-	TextChannel,
 } from 'discord.js';
 import {
 	ActionRowBuilder,
@@ -22,9 +22,12 @@ import {
 export const Report: ContextMenu = {
 	data: new ContextMenuCommandBuilder().setName('Signaler').setType(ApplicationCommandType.Message),
 	async execute(interaction) {
+		if (!Bot.isBot(interaction.client)) return LOGGER.event.fatal('Client is not a Bot. WTF?');
 		if (!interaction.isMessageContextMenuCommand()) {
 			return logErrorAndReply(interaction, 'Cette commande ne peut être utilisée que sur un message.');
 		}
+
+		const moderationChannel = interaction.client.vitals.moderationChannel;
 
 		const modal = buildModal(interaction);
 		await interaction.showModal(modal);
@@ -34,12 +37,8 @@ export const Report: ContextMenu = {
 			time: 0,
 		});
 
-		const channel = interaction.client.channels.cache.get(ENV.MODERATION_CHANNEL_ID);
-		if (!channel?.isTextBased())
-			return logErrorAndReply(interaction, 'Impossible de trouver le salon de modération.');
-
 		const reportEmbed = sendReportEmbed(
-			channel as TextChannel,
+			moderationChannel,
 			interaction,
 			reasonModalSubmit.fields.getTextInputValue('report_reason'),
 		);
@@ -79,13 +78,13 @@ function buildModal(interaction: ContextMenuCommandInteraction): ModalBuilder {
 
 /**
  * @description - Build and send the report embed.
- * @param {TextChannel} moderationChannel - The channel to send the embed to.
+ * @param {GuildTextBasedChannel} moderationChannel - The channel to send the embed to.
  * @param {MessageContextMenuCommandInteraction} interaction - The interaction to build the embed from.
  * @param {string} reason - The reason for the report.
  * @returns {Promise<Message>} - A promise that resolves to true if the embed was sent successfully.
  */
 async function sendReportEmbed(
-	moderationChannel: TextChannel,
+	moderationChannel: GuildTextBasedChannel,
 	interaction: MessageContextMenuCommandInteraction,
 	reason: string,
 ): Promise<Message> {

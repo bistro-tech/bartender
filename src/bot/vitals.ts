@@ -10,7 +10,7 @@ export class Vitals {
 	public readonly ticketInit: GuildTextBasedChannel;
 	/* Roles */
 	public readonly bumpRole: Role;
-	/* Channels */
+	/* Categories */
 	public readonly ticketCategory: CategoryChannel;
 
 	constructor(public readonly server: Guild) {

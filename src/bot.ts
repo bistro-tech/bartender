@@ -11,6 +11,7 @@ export class Bot extends Client {
 	// Initialized in the start method
 	// TODO: See if we can remove the !
 	public vitals!: Readonly<Vitals>;
+	public bumpBootReminder = true;
 
 	static isBot(obj?: unknown): obj is Bot {
 		return obj instanceof Bot;

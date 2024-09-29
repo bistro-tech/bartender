@@ -1,12 +1,8 @@
 import { Bot } from '@bot';
 import type { BotEvent } from '@events';
 import { LOGGER } from '@log';
+import { BUMP_COOLDOWN } from '@utils/bump';
 import { roleToPing } from '@utils/discord-formats';
-
-import { BUMP_COOLDOWN } from '../messageCreate/bumpDetector';
-
-// Object because simple bool can't be edited from an import/export
-export const BOOT_NOTIFICATION_SETTINGS = { should: true };
 
 /**
  * @listensTo   - ready
@@ -33,11 +29,7 @@ export const BUMP_RECOVER: BotEvent = {
 			// BUMP_COOLDOWN after the latest message.
 			const rebootCooldown = BUMP_COOLDOWN - timeSinceLastMessage;
 			LOGGER.event.debug(`I rebooted, triggering a bump reminder in ${rebootCooldown / 60_000}min.`);
-			setTimeout(async () => {
-				if (!BOOT_NOTIFICATION_SETTINGS.should) return;
-
-				await bumpChannel.send(notifMessage);
-			}, rebootCooldown);
+			setTimeout(() => client.bumpBootReminder && bumpChannel.send(notifMessage), rebootCooldown);
 		}
 	},
 };

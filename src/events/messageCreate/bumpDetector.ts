@@ -1,13 +1,9 @@
 import { Bot } from '@bot';
 import type { BotEvent } from '@events';
 import { LOGGER } from '@log';
+import { BUMP_COOLDOWN, DISBOARD_BOT_ID } from '@utils/bump';
 import { roleToPing } from '@utils/discord-formats';
 import { InteractionType } from 'discord.js';
-
-import { BOOT_NOTIFICATION_SETTINGS } from '../ready/bumpRecover';
-
-export const BUMP_COOLDOWN = 7_200_000; // Two hours
-const DISBOARD_BOT_ID = '302050872383242240';
 
 /**
  * @listensTo   - messageCreate
@@ -35,7 +31,7 @@ export const BUMP_DETECTOR: BotEvent = {
 			return;
 
 		// Disable on boot notification if it didn't already happen
-		BOOT_NOTIFICATION_SETTINGS.should = false;
+		message.client.bumpBootReminder = false;
 
 		LOGGER.event.debug(`Next bump reminder at ${new Date(new Date().getTime() + BUMP_COOLDOWN).toLocaleString()}`);
 		setTimeout(

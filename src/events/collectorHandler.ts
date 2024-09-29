@@ -25,8 +25,8 @@ export const COLLECTOR_HANDLER: BotEvent = {
 		LOGGER.event.debug(`user ${user} triggered '${customId}' collector.`);
 
 		// OK while we only have one collector, will be fixed right after
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-		const maybeErr = await tri(() => collector.execute(interaction.client as Bot, interaction as any));
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const maybeErr = await tri(() => collector.execute(interaction as any));
 		if (maybeErr && isErr(maybeErr)) {
 			const reply = interaction.replied
 				? interaction.editReply.bind(interaction)

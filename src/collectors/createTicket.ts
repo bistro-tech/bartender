@@ -9,7 +9,7 @@ import { ChannelType, ComponentType, OverwriteType } from 'discord.js';
 export const CREATE_TICKET: Collector = {
 	customID: TICKET_MENU_ID,
 	trigger: ComponentType.StringSelect,
-	execute: async (bot, interaction) => {
+	execute: async (interaction) => {
 		// HELP is a special case
 		const [kind] = interaction.values as Array<TICKET_KIND | 'HELP'>;
 		if (!kind) return LOGGER.event.fatal(`CREATE_TICKET without a kind??`);
@@ -21,7 +21,7 @@ export const CREATE_TICKET: Collector = {
 				ephemeral: true,
 			});
 
-		const server = bot.guilds.cache.get(ENV.SERVER_ID);
+		const server = interaction.client.guilds.cache.get(ENV.SERVER_ID);
 		if (!server) return LOGGER.event.fatal(`Client doesn't have access to guild ${ENV.SERVER_ID}.`);
 
 		const ticketCategory = await server.channels.fetch(ENV.TICKET_CATEGORY_ID);

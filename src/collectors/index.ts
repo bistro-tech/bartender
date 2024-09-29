@@ -1,4 +1,3 @@
-import type { Bot } from '@bot';
 import { Collection, type MappedInteractionTypes } from 'discord.js';
 
 import { CREATE_TICKET } from './createTicket';
@@ -11,7 +10,7 @@ export type Collector = {
 		 */
 		readonly trigger: Type;
 		readonly customID: string;
-		readonly execute: (bot: Bot, interaction: MappedInteractionTypes<true>[Type]) => Awaitable<unknown>;
+		readonly execute: (interaction: MappedInteractionTypes<true>[Type]) => Awaitable<unknown>;
 	};
 }[keyof MappedInteractionTypes];
 

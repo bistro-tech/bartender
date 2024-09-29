@@ -1,8 +1,6 @@
 import type { ClientEvents } from 'discord.js';
 
-import { COLLECTOR_HANDLER } from './collectorHandler';
-import { COMMAND_HANDLER } from './commandHandler';
-import { CONTEXT_MENU_HANDLER } from './contextMenuHandler';
+import { INTERACTION_HANDLER } from './interactionHandler';
 import { MESSAGE_BUMP } from './messageCreateBump';
 import { READY } from './ready';
 import { READY_BUMP_RECOVER } from './readyBumpRecover';
@@ -19,10 +17,8 @@ export type BotEvent = {
 
 export const EVENTS: Array<BotEvent> = [
 	READY,
+	INTERACTION_HANDLER,
 	MESSAGE_BUMP,
-	COMMAND_HANDLER,
-	CONTEXT_MENU_HANDLER,
 	READY_SETUP_TICKETS_SYSTEM,
 	READY_BUMP_RECOVER,
-	COLLECTOR_HANDLER,
 ];

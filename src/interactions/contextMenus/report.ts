@@ -25,7 +25,7 @@ import {
 export const Report: ContextMenu = {
 	data: new ContextMenuCommandBuilder().setName('Signaler').setType(ApplicationCommandType.Message),
 	async execute(interaction) {
-		if (!Bot.isBot(interaction.client)) return LOGGER.event.fatal('Client is not a Bot. WTF?');
+		if (!Bot.isBot(interaction.client)) return LOGGER.context.fatal(interaction, 'Client is not a Bot. WTF?');
 		if (!interaction.isMessageContextMenuCommand()) {
 			return logErrorAndReply(interaction, 'Cette commande ne peut être utilisée que sur un message.');
 		}

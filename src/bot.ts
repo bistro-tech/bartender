@@ -1,35 +1,22 @@
-import { type Collector, COLLECTORS_COLLECTION } from '@collectors';
-import type { Command } from '@commands';
 import { COMMANDS_COLLECTION } from '@commands';
-import type { ContextMenu } from '@contextmenus';
 import { CONTEXT_MENUS_COLLECTION } from '@contextmenus';
 import { EVENTS } from '@events';
 import { LOGGER } from '@log';
-import type {
-	ClientEvents,
-	Collection,
-	OAuth2Guild,
-	RESTPostAPIApplicationCommandsJSONBody,
-	RESTPostAPIContextMenuApplicationCommandsJSONBody,
-} from 'discord.js';
-import { Client, GatewayIntentBits, REST, Routes } from 'discord.js';
+import type { ClientEvents, RESTPostAPIApplicationCommandsJSONBody } from 'discord.js';
+import { Client, GatewayIntentBits, Routes } from 'discord.js';
 
-const BotSymbol = Symbol();
+import { Vitals } from './bot/vitals';
 
 export class Bot extends Client {
-	public readonly COMMANDS: Collection<string, Command> = COMMANDS_COLLECTION;
-	public readonly CONTEXT_MENUS: Collection<string, ContextMenu> = CONTEXT_MENUS_COLLECTION;
-	public readonly COLLECTORS: Collection<string, Collector> = COLLECTORS_COLLECTION;
+	// Initialized in the start method
+	// TODO: See if we can remove the !
+	public vitals!: Readonly<Vitals>;
 
-	private readonly [BotSymbol] = true;
-	static isBot(obj: unknown): obj is Bot {
-		return (obj as Bot)[BotSymbol];
+	static isBot(obj?: unknown): obj is Bot {
+		return obj instanceof Bot;
 	}
 
-	constructor(
-		private readonly TOKEN: string,
-		private readonly CLIENT_ID: string,
-	) {
+	constructor() {
 		super({
 			intents: [
 				GatewayIntentBits.Guilds,
@@ -55,7 +42,25 @@ export class Bot extends Client {
 				// GatewayIntentBits.DirectMessagePolls
 			],
 		});
+	}
 
+	public async start(TOKEN: string, SERVER_ID: string): Promise<void> {
+		await this.login(TOKEN);
+
+		// ensure the bot is only on one server, ours.
+		if ((await this.guilds.fetch()).size !== 1) return LOGGER.internal.fatal('Bot is on multiple servers.');
+
+		const server = this.guilds.cache.get(SERVER_ID);
+		if (!server) return LOGGER.internal.fatal("Bot isn't on our server ?");
+
+		this.vitals = new Vitals(server);
+
+		await this.clearCommands();
+		await this.registerApplicationCommands();
+		this.registerEvents();
+	}
+
+	private registerEvents(): void {
 		for (const event of EVENTS) {
 			LOGGER.internal.debug(`Registering event '${event.name}'.`);
 			// because of TS-server skill issues
@@ -68,46 +73,29 @@ export class Bot extends Client {
 		}
 	}
 
-	public async start(): Promise<void> {
-		await this.login(this.TOKEN);
-		const guilds = await this.guilds.fetch();
-		await this.clearCommands();
-		return this.registerSlashCommands(guilds);
-	}
+	private async registerApplicationCommands(): Promise<void> {
+		if (!this.isReady()) return LOGGER.internal.fatal("Bot isn't logged in.");
 
-	private async registerSlashCommands(guilds: Collection<string, OAuth2Guild>): Promise<void> {
-		const rest = new REST().setToken(this.TOKEN);
-		const commands: Array<RESTPostAPIApplicationCommandsJSONBody> = this.COMMANDS.each((cmd) =>
-			LOGGER.internal.debug(`Command '${cmd.data.name}' gets registered.`),
-		).map((cmd) => cmd.data.toJSON());
+		LOGGER.internal.debug(`Registering bot interactions in '${this.vitals.server.name}'.`);
+		const body = COMMANDS_COLLECTION.each((cmd) =>
+			LOGGER.internal.debug(`  Registering (/) command '${cmd.data.name}'.`),
+		)
+			.map<RESTPostAPIApplicationCommandsJSONBody>((cmd) => cmd.data.toJSON())
+			.concat(
+				CONTEXT_MENUS_COLLECTION.each((cmd) =>
+					LOGGER.internal.debug(`  Registering contextMenu '${cmd.data.name}'.`),
+				).map<RESTPostAPIApplicationCommandsJSONBody>((cmd) => cmd.data.toJSON()),
+			);
 
-		const contextMenus: Array<RESTPostAPIContextMenuApplicationCommandsJSONBody> = this.CONTEXT_MENUS.each((cmd) =>
-			LOGGER.internal.debug(`ContextMenus '${cmd.data.name}' gets registered.`),
-		).map((cmd) => cmd.data.toJSON());
-
-		for (const guild of guilds.values()) {
-			LOGGER.internal.debug(`Registering commands in '${guild.name}'.`);
-			await rest.put(Routes.applicationGuildCommands(this.CLIENT_ID, guild.id), {
-				body: commands.concat(contextMenus),
-			});
-		}
+		const url = Routes.applicationGuildCommands(this.application.id, this.vitals.server.id);
+		await this.rest.put(url, { body });
 	}
 
 	private async clearCommands(): Promise<void> {
-		LOGGER.internal.debug(`Clearing all guild commands.`);
-		for (const guild of this.guilds.cache.values()) {
-			LOGGER.internal.debug(`Clearing all commands in guild '${guild.name}'.`);
-			const commands = await guild.commands.fetch();
-			for (const command of commands.values()) {
-				LOGGER.internal.debug(`Clearing command '${command.name}'.`);
-				await guild.commands.delete(command.id);
-			}
-		}
-
-		LOGGER.internal.debug(`Clearing application commands.`);
-		const applicationCommands = (await this.application?.commands.fetch()) ?? [];
-		for (const command of applicationCommands.values()) {
-			LOGGER.internal.debug(`Clearing command '${command.name}'.`);
+		LOGGER.internal.debug(`Clearing all commands in guild '${this.vitals.server.name}'.`);
+		const guildCommands = await this.vitals.server.commands.fetch();
+		for (const command of guildCommands.values()) {
+			LOGGER.internal.debug(`  Clearing intéraction '${command.name}'.`);
 			await command.delete();
 		}
 	}

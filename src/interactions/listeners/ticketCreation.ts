@@ -1,5 +1,5 @@
 import { Bot } from '@bot';
-import type { Collector } from '@collectors';
+import type { Collector } from '@listeners';
 import { LOGGER } from '@log';
 import { formatUser } from '@log/utils';
 import { channelToPing } from '@utils/discord-formats';

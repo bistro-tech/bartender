@@ -4,13 +4,13 @@
 		"paths": {
 			"@bot": ["./src/bot"],
 			"@commands": ["./src/interactions/commands"],
-			"@collectors": ["./src/interactions/collectors"],
 			"@contextmenus": ["./src/interactions/contextMenus"],
 			"@db": ["./src/db"],
 			"@db/schema": ["./src/db/schema"],
 			"@db/enums/*": ["./src/db/enums/*"],
 			"@env": ["./src/env"],
 			"@events": ["./src/events"],
+			"@listeners": ["./src/interactions/listeners"],
 			"@log": ["./src/log"],
 			"@log/utils": ["./src/log/utils"],
 			"@utils/*": ["./src/utils/*"]

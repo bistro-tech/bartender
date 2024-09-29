@@ -38,8 +38,9 @@ export const BUMP_DETECTOR: BotEvent = {
 		BOOT_NOTIFICATION_SETTINGS.should = false;
 
 		LOGGER.event.debug(`Next bump reminder at ${new Date(new Date().getTime() + BUMP_COOLDOWN).toLocaleString()}`);
-		setTimeout(async () => {
-			await message.channel.send(`${roleToPing(bumpRole)} Il est temps de bump le serveur !`);
-		}, BUMP_COOLDOWN);
+		setTimeout(
+			() => message.channel.send(`${roleToPing(bumpRole)} Il est temps de bump le serveur !`),
+			BUMP_COOLDOWN,
+		);
 	},
 };

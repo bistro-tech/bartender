@@ -23,6 +23,7 @@ export const INTERACTION_HANDLER: BotEvent = {
 
 		if (!interaction.inGuild()) return LOGGER.event.error(`[${interactionID}] not executed in a guild by ${user}.`);
 
+		let handler: () => Awaitable<unknown>;
 		switch (true) {
 			case interaction.isChatInputCommand(): {
 				const command = COMMANDS_COLLECTION.get(interaction.commandName);
@@ -30,9 +31,8 @@ export const INTERACTION_HANDLER: BotEvent = {
 
 				LOGGER.event.debug(`user ${user} executed ${interactionID}.`);
 
-				// TODO: err handling
-				await command.execute(interaction);
-				return;
+				handler = command.execute.bind(null, interaction);
+				break;
 			}
 			case interaction.isAnySelectMenu(): {
 				const collector = COLLECTORS_COLLECTION.get(interaction.customId);
@@ -40,10 +40,10 @@ export const INTERACTION_HANDLER: BotEvent = {
 
 				LOGGER.event.debug(`user ${user} triggered ${interactionID} collector.`);
 
-				// TODO: err handling
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
-				await collector.execute(interaction as any);
-				return;
+				// @ts-expect-error tkt je sais ce que je fais
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				handler = collector.execute.bind(null, interaction as any);
+				break;
 			}
 			case interaction.isContextMenuCommand(): {
 				const contextMenuHandler = CONTEXT_MENUS_COLLECTION.get(interaction.commandName);
@@ -51,14 +51,14 @@ export const INTERACTION_HANDLER: BotEvent = {
 
 				LOGGER.event.debug(`user ${user} executed ${interactionID}.`);
 
-				// TODO: err handling
-				await contextMenuHandler.execute(interaction);
-				return;
+				handler = contextMenuHandler.execute.bind(null, interaction);
+				break;
 			}
-			default: {
+			default:
 				return LOGGER.event.error(`I can't handle ${interactionID} !!`);
-			}
 		}
+		// TODO: error handling
+		await handler();
 	},
 };
 

@@ -3,9 +3,9 @@
 	"compilerOptions": {
 		"paths": {
 			"@bot": ["./src/bot"],
-			"@commands": ["./src/commands"],
-			"@collectors": ["./src/collectors"],
-			"@contextmenus": ["./src/contextMenus"],
+			"@commands": ["./src/interactions/commands"],
+			"@collectors": ["./src/interactions/collectors"],
+			"@contextmenus": ["./src/interactions/contextMenus"],
 			"@db": ["./src/db"],
 			"@db/schema": ["./src/db/schema"],
 			"@db/enums/*": ["./src/db/enums/*"],

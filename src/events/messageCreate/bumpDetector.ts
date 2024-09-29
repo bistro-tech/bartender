@@ -4,7 +4,7 @@ import { LOGGER } from '@log';
 import { roleIDToPing } from '@utils/discord-formats';
 import { InteractionType } from 'discord.js';
 
-import { BOOT_NOTIFICATION_SETTINGS } from './readyBumpRecover';
+import { BOOT_NOTIFICATION_SETTINGS } from '../ready/bumpRecover';
 
 export const BUMP_COOLDOWN = 7_200_000; // Two hours
 const DISBOARD_BOT_ID = '302050872383242240';
@@ -13,8 +13,8 @@ const DISBOARD_BOT_ID = '302050872383242240';
  * @listensTo   - messageCreate
  * @description - Emitted when a message is created.
  */
-export const MESSAGE_BUMP: BotEvent = {
-	name: 'Message create bump',
+export const BUMP_DETECTOR: BotEvent = {
+	name: 'Bump detector',
 	kind: 'messageCreate',
 	once: false,
 	// Clearly imperfect filter, but discord seems to have removed all good ways

@@ -58,6 +58,9 @@ export class Bot extends Client {
 		await this.clearCommands();
 		await this.registerApplicationCommands();
 		this.registerEvents();
+		// retrigger because we missed the call.
+		// TODO: can we remove it ?
+		this.emit('ready', this as Client<true>);
 	}
 
 	private registerEvents(): void {

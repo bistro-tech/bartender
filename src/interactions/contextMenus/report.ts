@@ -19,6 +19,9 @@ import {
 	TextInputStyle,
 } from 'discord.js';
 
+/**
+ * Menu used to report a user's message to the staff for bad behavior.
+ */
 export const Report: ContextMenu = {
 	data: new ContextMenuCommandBuilder().setName('Signaler').setType(ApplicationCommandType.Message),
 	async execute(interaction) {

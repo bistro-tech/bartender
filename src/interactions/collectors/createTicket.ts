@@ -6,6 +6,9 @@ import { channelToPing } from '@utils/discord-formats';
 import { type TICKET_KIND, TICKET_MENU_ID } from '@utils/tickets';
 import { ChannelType, ComponentType, OverwriteType } from 'discord.js';
 
+/**
+ * Listen for ticket creations. Creates ticket accordingly.
+ */
 export const CREATE_TICKET: Collector = {
 	customID: TICKET_MENU_ID,
 	trigger: ComponentType.StringSelect,

@@ -7,7 +7,7 @@ import { InteractionType } from 'discord.js';
 
 /**
  * @listensTo   - messageCreate
- * @description - Emitted when a message is created.
+ * @description - Detects when a user uses disboard's /bump and reminds 2hours later to do it again.
  */
 export const BUMP_DETECTOR: BotEvent = {
 	name: 'Bump detector',

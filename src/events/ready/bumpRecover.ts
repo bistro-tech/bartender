@@ -6,7 +6,7 @@ import { roleToPing } from '@utils/discord-formats';
 
 /**
  * @listensTo   - ready
- * @description - Upon boot starts a 2hour timer and tells users to bump if not disabled before.
+ * @description - Upon boot check when was the last message in bump channel to remind users to bump the server.
  */
 export const BUMP_RECOVER: BotEvent = {
 	name: 'Bump recover',

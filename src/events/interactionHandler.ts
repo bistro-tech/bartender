@@ -2,7 +2,7 @@ import { Bot } from '@bot';
 import { COMMANDS_COLLECTION } from '@commands';
 import { CONTEXT_MENUS_COLLECTION } from '@contextmenus';
 import type { BotEvent } from '@events';
-import { COLLECTORS_COLLECTION } from '@listeners';
+import { LISTENERS, type SpecificListener } from '@listeners';
 import { LOGGER } from '@log';
 import { formatUser } from '@log/utils';
 import { ComponentType, type Interaction, InteractionType } from 'discord.js';
@@ -37,14 +37,16 @@ export const INTERACTION_HANDLER: BotEvent = {
 				break;
 			}
 			case interaction.isAnySelectMenu(): {
-				const collector = COLLECTORS_COLLECTION.get(interaction.customId);
+				type ListenerKind = SpecificListener<typeof interaction.componentType>;
+				const collector = LISTENERS.find(
+					(listener): listener is ListenerKind =>
+						listener.trigger === interaction.componentType && listener.customID === interaction.customId,
+				);
 				if (!collector) return LOGGER.event.debug(`${interactionID}: collector not found.`);
 
 				LOGGER.event.debug(`user ${user} triggered ${interactionID} collector.`);
 
-				// @ts-expect-error tkt je sais ce que je fais
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				handler = collector.execute.bind(null, interaction as any);
+				handler = collector.execute.bind(null, interaction);
 				break;
 			}
 			case interaction.isContextMenuCommand(): {

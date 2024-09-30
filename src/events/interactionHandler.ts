@@ -22,7 +22,8 @@ export const INTERACTION_HANDLER: BotEvent = {
 		const interactionID = getInteractionIdentifier(interaction);
 		const user = formatUser(discord_user);
 
-		if (!interaction.inGuild()) return LOGGER.event.error(`[${interactionID}] not executed in a guild by ${user}.`);
+		if (!interaction.inCachedGuild())
+			return LOGGER.event.error(`[${interactionID}] not executed in a cached guild by ${user}.`);
 
 		let handler: () => Promise<unknown>;
 		switch (true) {

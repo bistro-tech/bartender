@@ -6,6 +6,7 @@ import { COLLECTORS_COLLECTION } from '@listeners';
 import { LOGGER } from '@log';
 import { formatUser } from '@log/utils';
 import { ComponentType, type Interaction, InteractionType } from 'discord.js';
+import { ResultAsync } from 'neverthrow';
 
 /**
  * @listensTo   - interactionCreate
@@ -23,7 +24,7 @@ export const INTERACTION_HANDLER: BotEvent = {
 
 		if (!interaction.inGuild()) return LOGGER.event.error(`[${interactionID}] not executed in a guild by ${user}.`);
 
-		let handler: () => Awaitable<unknown>;
+		let handler: () => Promise<unknown>;
 		switch (true) {
 			case interaction.isChatInputCommand(): {
 				const command = COMMANDS_COLLECTION.get(interaction.commandName);
@@ -57,8 +58,17 @@ export const INTERACTION_HANDLER: BotEvent = {
 			default:
 				return LOGGER.event.error(`I can't handle ${interactionID} !!`);
 		}
-		// TODO: error handling
-		await handler();
+
+		const res = await ResultAsync.fromPromise(handler(), (err) => err);
+		if (res.isErr()) {
+			const reply = interaction.replied
+				? interaction.editReply.bind(interaction)
+				: interaction.reply.bind(interaction);
+			await LOGGER.event.error(
+				`Erreur lors du hanling de ${interactionID}.\n\`\`\`\n${JSON.stringify(res.error)}\n\`\`\``,
+			);
+			await reply(`Une erreur est survenue, merci de check les logs.`);
+		}
 	},
 };
 

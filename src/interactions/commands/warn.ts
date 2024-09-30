@@ -1,11 +1,12 @@
+import { Bot } from '@bot';
 import type { Command } from '@commands';
 import { DB } from '@db';
 import { blame, discord_user } from '@db/schema';
 import { LOGGER } from '@log';
 import { formatUser } from '@log/utils';
 import { userToPing } from '@utils/discord-formats';
-import { isErr, tri } from '@utils/tri';
 import { SlashCommandBuilder } from 'discord.js';
+import { ResultAsync } from 'neverthrow';
 
 /**
  * @command     - warn
@@ -38,69 +39,59 @@ export const WARN: Command = {
 				.setRequired(true),
 		),
 	async execute(interaction) {
+		if (!Bot.isBot(interaction.client)) return LOGGER.command.fatal(interaction, 'Client is not a Bot. WTF?');
+		const warner = interaction.user;
+		const warnerLog = formatUser(warner);
 		const reason = interaction.options.getString('reason', true);
-		const warned = interaction.options.getUser('user', true);
-		const issuer = interaction.user;
+		const warned = interaction.options.getMember('user');
+		if (!warned) return LOGGER.command.fatal(interaction, "Warning a user that doesn't exists??");
+		const warnedLog = formatUser(warned.user);
 
-		LOGGER.command.debug(
-			interaction,
-			`${formatUser(issuer)} tries to warn ${formatUser(warned)} because: '${reason}'.`,
-		);
-
-		if (warned.id === issuer.id) {
-			await LOGGER.command.warn(interaction, `${issuer.displayName} tried to warn himself, what an moron.`);
-			return interaction.reply("You can't warn yourself.");
+		switch (true) {
+			case warned.id === warner.id:
+				await LOGGER.command.warn(interaction, `${warnerLog} tried to warn himself, what an moron.`);
+				return interaction.reply("T'es maso ou quoi?");
+			case warned.user.bot:
+				await LOGGER.command.warn(interaction, `${warnerLog} tried to warn a bot, what an moron.`);
+				return interaction.reply('Un bot est toujours parfait.');
+			case warned.permissions.has('Administrator'):
+				await LOGGER.command.warn(interaction, `${warnerLog} tried to warn an admin, what an moron.`);
+				return interaction.reply('An admin is always perfect, I dare you to think otherwise.');
+			default:
+				break;
 		}
 
-		if (warned.bot) {
-			await LOGGER.command.warn(interaction, `${issuer.displayName} tried to warn a bot, what an moron.`);
-			return interaction.reply("You can't warn a bot.");
-		}
+		LOGGER.command.debug(interaction, `${warnerLog} warns ${warnedLog} because: '${reason}'.`);
 
-		const member = await interaction.guild?.members.fetch(warned.id);
-		if (member?.permissions.has('Administrator')) {
-			await LOGGER.command.warn(interaction, `${issuer.displayName} tried to warn an admin, what an moron.`);
-			return interaction.reply('An admin is always perfect, I dare you to think otherwise.');
-		}
-
-		// ensure both issuer and warned exist in DB.
-		const creationUsersErr = await tri(() =>
+		const userCreation = ResultAsync.fromPromise(
 			DB.insert(discord_user)
 				.values([
 					{ id: warned.id, display_name: warned.displayName },
-					{ id: issuer.id, display_name: issuer.displayName },
+					{ id: warner.id, display_name: warner.displayName },
 				])
 				.onConflictDoUpdate({ target: discord_user.id, set: { display_name: warned.displayName } }),
+			(err) => ({ err, message: `Error when creating users ${warnedLog} or ${warnerLog}.` }),
 		);
-		if (isErr(creationUsersErr)) {
-			await LOGGER.command.error(
-				interaction,
-				// eslint-disable-next-line @typescript-eslint/restrict-template-expressions -- drizzle errors implements .toString().
-				`Failed to create user ${formatUser(warned)}.\n > ${creationUsersErr.err} \n\`\`\`\n${JSON.stringify(creationUsersErr.err)}\n\`\`\``,
-			);
-			return interaction.reply("Une erreur est survenue lors de la création de l'utilisateur warned en DB.");
-		}
-
-		const creationBlameErr = await tri(() =>
+		const blameInsert = ResultAsync.fromPromise(
 			DB.insert(blame).values({
 				blamee_id: warned.id,
-				blamer_id: issuer.id,
+				blamer_id: warner.id,
 				reason,
 				kind: 'WARN',
 			}),
+			(err) => ({ err, message: `Error when creating warn.` }),
 		);
-		if (isErr(creationBlameErr)) {
-			await LOGGER.command.error(
-				interaction,
-				// eslint-disable-next-line @typescript-eslint/restrict-template-expressions -- drizzle errors implements .toString().
-				`Failed to blame user ${formatUser(warned)}.\n > ${creationBlameErr.err} \n\`\`\`\n${JSON.stringify(creationBlameErr.err)}\n\`\`\``,
-			);
-			return interaction.reply('Une erreur est survenue lors de la création du WARN en DB.');
+
+		const res = await userCreation.andThen(() => blameInsert);
+		if (res.isErr()) {
+			const { err, message } = res.error;
+			await LOGGER.command.error(interaction, `${message}.\n\`\`\`\n${JSON.stringify(err)}\n\`\`\``);
+			return interaction.reply('Une erreur est survenue, merci de check les logs.');
 		}
 
-		LOGGER.command.debug(interaction, `${formatUser(warned)} got warned for '${reason}'.`);
+		LOGGER.command.debug(interaction, `${warnedLog} got warned for '${reason}'.`);
 		return interaction.reply(`
-			${userToPing(warned)} tu viens d'être warn par ${userToPing(issuer)} pour la raison suivante:
+			${userToPing(warned.user)} tu viens d'être warn par ${userToPing(warner)} pour la raison suivante:
 			> ${reason}
 			Tache de faire mieux la prochaine fois.
 		`);

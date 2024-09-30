@@ -5,6 +5,7 @@
 	"scripts": {
 		"dev": "bun src/index.ts",
 		"dev:hot": "bun --hot src/index.ts",
+		"tsc:check": "tsc --noEmit --skipLibCheck true",
 		"build": "bun build ./src/index.ts --outdir ./out --sourcemap --target bun",
 		"format": "prettier -c .",
 		"format:fix": "prettier -w .",

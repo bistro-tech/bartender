@@ -2,7 +2,7 @@ import { Bot } from '@bot';
 import type { BotEvent } from '@events';
 import { LOGGER } from '@log';
 import { formatUser } from '@log/utils';
-import { isErr, tri } from '@utils/tri';
+import { ResultAsync } from 'neverthrow';
 
 /**
  * @listensTo   - interactionCreate
@@ -27,14 +27,15 @@ export const COMMAND_HANDLER: BotEvent = {
 
 		LOGGER.event.debug(`user ${user} executed '${interaction.toString()}'`);
 
-		const maybeErr = await tri(() => command.execute(interaction));
-		if (isErr(maybeErr)) {
+		const maybeErr = await ResultAsync.fromPromise(command.execute(interaction), (e) => e);
+		if (maybeErr.isErr()) {
 			const reply = interaction.replied
 				? interaction.editReply.bind(interaction)
 				: interaction.reply.bind(interaction);
-			// @ts-expect-error assume that err has a .toString() despite being an unknown type
-			await LOGGER.interaction.error(interaction, maybeErr.err);
-			await reply(`There was an unhandled error. Please check the logs.`);
+			await LOGGER.event.error(
+				`Erreur lors du hanling de command /${interaction.commandName}.\n\`\`\`\n${JSON.stringify(maybeErr.error)}\n\`\`\``,
+			);
+			await reply(`Une erreur est survenue, merci de check les logs.`);
 		}
 	},
 };

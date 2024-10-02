@@ -8,6 +8,7 @@ import type {
 	MessageContextMenuCommandInteraction,
 	ModalActionRowComponentBuilder,
 	TextChannel,
+	UserContextMenuCommandInteraction,
 } from 'discord.js';
 import {
 	ActionRowBuilder,
@@ -106,11 +107,14 @@ async function sendReportEmbed(
 
 /**
  * @description - Log error and reply to the interaction.
- * @param {ContextMenuCommandInteraction} interaction - The interaction to reply to.
+ * @param {UserContextMenuCommandInteraction | MessageContextMenuCommandInteraction} interaction - The interaction to reply to.
  * @param {string} content - The error message.
  * @returns {Promise<void>} - A promise that resolves when the error is logged and the interaction is replied to.
  */
-async function logErrorAndReply(interaction: ContextMenuCommandInteraction, content: string): Promise<void> {
+async function logErrorAndReply(
+	interaction: UserContextMenuCommandInteraction | MessageContextMenuCommandInteraction,
+	content: string,
+): Promise<void> {
 	await interaction.reply({
 		content: 'Erreur lors du signalement.',
 		ephemeral: true,

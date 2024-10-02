@@ -115,5 +115,5 @@ async function logErrorAndReply(interaction: ContextMenuCommandInteraction, cont
 		content: 'Erreur lors du signalement.',
 		ephemeral: true,
 	});
-	return LOGGER.context.error(interaction, content);
+	return LOGGER.interaction.error(interaction, content);
 }

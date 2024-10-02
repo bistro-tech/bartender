@@ -33,7 +33,7 @@ export const COMMAND_HANDLER: BotEvent = {
 				? interaction.editReply.bind(interaction)
 				: interaction.reply.bind(interaction);
 			// @ts-expect-error assume that err has a .toString() despite being an unknown type
-			await LOGGER.command.error(interaction, maybeErr.err);
+			await LOGGER.interaction.error(interaction, maybeErr.err);
 			await reply(`There was an unhandled error. Please check the logs.`);
 		}
 	},

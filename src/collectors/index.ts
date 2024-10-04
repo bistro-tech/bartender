@@ -11,7 +11,7 @@ export type Collector = {
 		 */
 		readonly trigger: Type;
 		readonly customID: string;
-		readonly execute: (bot: Bot, interaction: MappedInteractionTypes<true>[Type]) => Awaitable<unknown>;
+		readonly execute: (bot: Bot, interaction: MappedInteractionTypes<true>[Type]) => Promise<unknown>;
 	};
 }[keyof MappedInteractionTypes];
 

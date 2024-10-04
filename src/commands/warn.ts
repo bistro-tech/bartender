@@ -4,8 +4,8 @@ import { blame, discord_user } from '@db/schema';
 import { LOGGER } from '@log';
 import { formatUser } from '@log/utils';
 import { userToPing } from '@utils/discord-formats';
-import { isErr, tri } from '@utils/tri';
 import { SlashCommandBuilder } from 'discord.js';
+import { ResultAsync } from 'neverthrow';
 
 /**
  * @command     - warn
@@ -63,39 +63,30 @@ export const WARN: Command = {
 			return interaction.reply('An admin is always perfect, I dare you to think otherwise.');
 		}
 
-		// ensure both issuer and warned exist in DB.
-		const creationUsersErr = await tri(() =>
+		const userCreation = ResultAsync.fromPromise(
 			DB.insert(discord_user)
 				.values([
 					{ id: warned.id, display_name: warned.displayName },
 					{ id: issuer.id, display_name: issuer.displayName },
 				])
 				.onConflictDoUpdate({ target: discord_user.id, set: { display_name: warned.displayName } }),
+			(err) => ({ err, message: `Error when creating users ${formatUser(warned)} or ${formatUser(issuer)}.` }),
 		);
-		if (isErr(creationUsersErr)) {
-			await LOGGER.interaction.error(
-				interaction,
-				// eslint-disable-next-line @typescript-eslint/restrict-template-expressions -- drizzle errors implements .toString().
-				`Failed to create user ${formatUser(warned)}.\n > ${creationUsersErr.err} \n\`\`\`\n${JSON.stringify(creationUsersErr.err)}\n\`\`\``,
-			);
-			return interaction.reply("Une erreur est survenue lors de la création de l'utilisateur warned en DB.");
-		}
-
-		const creationBlameErr = await tri(() =>
+		const blameInsert = ResultAsync.fromPromise(
 			DB.insert(blame).values({
 				blamee_id: warned.id,
 				blamer_id: issuer.id,
 				reason,
 				kind: 'WARN',
 			}),
+			(err) => ({ err, message: `Error when creating warn.` }),
 		);
-		if (isErr(creationBlameErr)) {
-			await LOGGER.interaction.error(
-				interaction,
-				// eslint-disable-next-line @typescript-eslint/restrict-template-expressions -- drizzle errors implements .toString().
-				`Failed to blame user ${formatUser(warned)}.\n > ${creationBlameErr.err} \n\`\`\`\n${JSON.stringify(creationBlameErr.err)}\n\`\`\``,
-			);
-			return interaction.reply('Une erreur est survenue lors de la création du WARN en DB.');
+
+		const res = await userCreation.andThen(() => blameInsert);
+		if (res.isErr()) {
+			const { err, message } = res.error;
+			await LOGGER.interaction.error(interaction, `${message}.\n\`\`\`\n${JSON.stringify(err)}\n\`\`\``);
+			return interaction.reply('Une erreur est survenue, merci de check les logs.');
 		}
 
 		LOGGER.interaction.debug(interaction, `${formatUser(warned)} got warned for '${reason}'.`);

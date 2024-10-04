@@ -28,3 +28,5 @@ jobs:
               run: bun run lint
             - name: Run Tests
               run: bun test
+            - name: Run TSC
+              run: bun tsc:check

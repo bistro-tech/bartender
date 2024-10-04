@@ -1,14 +1,12 @@
 import { __LOGGER } from './__logger';
 import type { Loggable } from './loggable';
-import { CommandLog } from './loggable/command';
-import { ContextLog } from './loggable/context';
 import { EventLog } from './loggable/event';
+import { InteractionLog } from './loggable/interaction';
 import { InternalLog } from './loggable/internal';
 import { UnknownLog } from './loggable/unknown';
 
 export const LOGGER = {
-	command: buildLogger(CommandLog),
-	context: buildLogger(ContextLog),
+	interaction: buildLogger(InteractionLog),
 	event: buildLogger(EventLog),
 	internal: buildLogger(InternalLog),
 	unknown: {
@@ -27,6 +25,6 @@ function buildLogger<T extends Constructor<Loggable>>(Loggable: T) {
 		info: (...args: Parameters): Promise<void> => __LOGGER.notifiant_log(new Loggable('INFO', ...args)),
 		warn: (...args: Parameters): Promise<void> => __LOGGER.notifiant_log(new Loggable('WARN', ...args)),
 		error: (...args: Parameters): Promise<void> => __LOGGER.notifiant_log(new Loggable('ERROR', ...args)),
-		fatal: (...args: Parameters): Promise<never> => __LOGGER.exiting_log(new Loggable('FATAL', ...args)),
+		fatal: (...args: Parameters): never => __LOGGER.exiting_log(new Loggable('FATAL', ...args)),
 	} as const;
 }

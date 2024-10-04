@@ -29,7 +29,7 @@ export const LIST_BLAMES: Command = {
 	async execute(interaction) {
 		const user = interaction.options.getUser('other_user', false) ?? interaction.user;
 
-		LOGGER.command.debug(
+		LOGGER.interaction.debug(
 			interaction,
 			`${formatUser(interaction.user)} asked for the blames of ${formatUser(user)}.`,
 		);
@@ -66,7 +66,7 @@ export const LIST_BLAMES: Command = {
 			),
 		);
 
-		LOGGER.command.debug(interaction, `Blames summary of ${formatUser(user)}: ${blamesSummary}.`);
+		LOGGER.interaction.debug(interaction, `Blames summary of ${formatUser(user)}: ${blamesSummary}.`);
 
 		return interaction.reply({
 			content: `Résumé: ${userBlames.length} blames; ${blamesSummary}`,

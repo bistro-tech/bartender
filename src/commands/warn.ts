@@ -42,24 +42,24 @@ export const WARN: Command = {
 		const warned = interaction.options.getUser('user', true);
 		const issuer = interaction.user;
 
-		LOGGER.command.debug(
+		LOGGER.interaction.debug(
 			interaction,
 			`${formatUser(issuer)} tries to warn ${formatUser(warned)} because: '${reason}'.`,
 		);
 
 		if (warned.id === issuer.id) {
-			await LOGGER.command.warn(interaction, `${issuer.displayName} tried to warn himself, what an moron.`);
+			await LOGGER.interaction.warn(interaction, `${issuer.displayName} tried to warn himself, what an moron.`);
 			return interaction.reply("You can't warn yourself.");
 		}
 
 		if (warned.bot) {
-			await LOGGER.command.warn(interaction, `${issuer.displayName} tried to warn a bot, what an moron.`);
+			await LOGGER.interaction.warn(interaction, `${issuer.displayName} tried to warn a bot, what an moron.`);
 			return interaction.reply("You can't warn a bot.");
 		}
 
 		const member = await interaction.guild?.members.fetch(warned.id);
 		if (member?.permissions.has('Administrator')) {
-			await LOGGER.command.warn(interaction, `${issuer.displayName} tried to warn an admin, what an moron.`);
+			await LOGGER.interaction.warn(interaction, `${issuer.displayName} tried to warn an admin, what an moron.`);
 			return interaction.reply('An admin is always perfect, I dare you to think otherwise.');
 		}
 
@@ -73,7 +73,7 @@ export const WARN: Command = {
 				.onConflictDoUpdate({ target: discord_user.id, set: { display_name: warned.displayName } }),
 		);
 		if (isErr(creationUsersErr)) {
-			await LOGGER.command.error(
+			await LOGGER.interaction.error(
 				interaction,
 				// eslint-disable-next-line @typescript-eslint/restrict-template-expressions -- drizzle errors implements .toString().
 				`Failed to create user ${formatUser(warned)}.\n > ${creationUsersErr.err} \n\`\`\`\n${JSON.stringify(creationUsersErr.err)}\n\`\`\``,
@@ -90,7 +90,7 @@ export const WARN: Command = {
 			}),
 		);
 		if (isErr(creationBlameErr)) {
-			await LOGGER.command.error(
+			await LOGGER.interaction.error(
 				interaction,
 				// eslint-disable-next-line @typescript-eslint/restrict-template-expressions -- drizzle errors implements .toString().
 				`Failed to blame user ${formatUser(warned)}.\n > ${creationBlameErr.err} \n\`\`\`\n${JSON.stringify(creationBlameErr.err)}\n\`\`\``,
@@ -98,7 +98,7 @@ export const WARN: Command = {
 			return interaction.reply('Une erreur est survenue lors de la création du WARN en DB.');
 		}
 
-		LOGGER.command.debug(interaction, `${formatUser(warned)} got warned for '${reason}'.`);
+		LOGGER.interaction.debug(interaction, `${formatUser(warned)} got warned for '${reason}'.`);
 		return interaction.reply(`
 			${userToPing(warned)} tu viens d'être warn par ${userToPing(issuer)} pour la raison suivante:
 			> ${reason}

@@ -5,7 +5,7 @@ import { EmbedBuilder } from 'discord.js';
 const LoggableSymbol = Symbol('Loggable');
 export abstract class Loggable {
 	public abstract readonly message: string;
-	public abstract readonly kind: 'COMMAND' | `INTERNAL` | 'EVENT' | 'UNKNOWN' | 'CONTEXT_MENU';
+	public abstract readonly kind: 'INTERACTION' | `INTERNAL` | 'EVENT' | 'UNKNOWN';
 	public abstract readonly severity: 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'FATAL';
 
 	private readonly [LoggableSymbol] = true;

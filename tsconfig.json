@@ -3,14 +3,14 @@
 	"compilerOptions": {
 		"paths": {
 			"@bot": ["./src/bot"],
-			"@commands": ["./src/commands"],
-			"@collectors": ["./src/collectors"],
-			"@contextmenus": ["./src/contextMenus"],
+			"@commands": ["./src/interactions/commands"],
+			"@contextmenus": ["./src/interactions/contextMenus"],
 			"@db": ["./src/db"],
 			"@db/schema": ["./src/db/schema"],
 			"@db/enums/*": ["./src/db/enums/*"],
 			"@env": ["./src/env"],
 			"@events": ["./src/events"],
+			"@listeners": ["./src/interactions/listeners"],
 			"@log": ["./src/log"],
 			"@log/utils": ["./src/log/utils"],
 			"@utils/*": ["./src/utils/*"]

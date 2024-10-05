@@ -1,12 +1,15 @@
 import { Bot } from '@bot';
-import type { Collector } from '@listeners';
+import type { Listener } from '@listeners';
 import { LOGGER } from '@log';
 import { formatUser } from '@log/utils';
 import { channelToPing } from '@utils/discord-formats';
 import { type TICKET_KIND, TICKET_MENU_ID } from '@utils/tickets';
 import { ChannelType, ComponentType, OverwriteType } from 'discord.js';
 
-export const CREATE_TICKET: Collector = {
+/**
+ * Listen for ticket creations. Creates ticket accordingly.
+ */
+export const CREATE_TICKET: Listener = {
 	customID: TICKET_MENU_ID,
 	trigger: ComponentType.StringSelect,
 	execute: async (interaction) => {

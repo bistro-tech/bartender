@@ -3,7 +3,6 @@ import type {
 	MessageContextMenuCommandInteraction,
 	UserContextMenuCommandInteraction,
 } from 'discord.js';
-import { Collection } from 'discord.js';
 
 import { Report } from './report';
 
@@ -14,4 +13,4 @@ export type ContextMenu = {
 	) => Promise<unknown>;
 };
 
-export const CONTEXT_MENUS_COLLECTION = new Collection([Report].map((c) => [c.data.name, c]));
+export const CONTEXT_MENUS: Array<ContextMenu> = [Report];

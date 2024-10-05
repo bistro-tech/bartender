@@ -1,5 +1,4 @@
 import type { ChatInputCommandInteraction, SlashCommandOptionsOnlyBuilder } from 'discord.js';
-import { Collection } from 'discord.js';
 
 import { LIST_BLAMES } from './list-blames';
 import { PING } from './ping';
@@ -10,4 +9,4 @@ export type Command = {
 	readonly execute: (interaction: ChatInputCommandInteraction<'cached'>) => Promise<unknown>;
 };
 
-export const COMMANDS_COLLECTION = new Collection([PING, LIST_BLAMES, WARN].map((c) => [c.data.name, c]));
+export const COMMANDS: Array<Command> = [PING, LIST_BLAMES, WARN];

@@ -1,5 +1,5 @@
-import { COMMANDS_COLLECTION } from '@commands';
-import { CONTEXT_MENUS_COLLECTION } from '@contextmenus';
+import { COMMANDS } from '@commands';
+import { CONTEXT_MENUS } from '@contextmenus';
 import type { BotEvent } from '@events';
 import { LISTENERS, type SpecificListener } from '@listeners';
 import { LOGGER } from '@log';
@@ -28,7 +28,7 @@ export const INTERACTION_HANDLER: BotEvent = {
 		let handler: () => Promise<unknown>;
 		switch (true) {
 			case interaction.isChatInputCommand(): {
-				const command = COMMANDS_COLLECTION.get(interaction.commandName);
+				const command = COMMANDS.find(({ data: { name } }) => name === interaction.commandName);
 				if (!command) return LOGGER.event.error(`${interactionID}: command not found.`);
 
 				handler = command.execute.bind(null, interaction);
@@ -46,7 +46,7 @@ export const INTERACTION_HANDLER: BotEvent = {
 				break;
 			}
 			case interaction.isContextMenuCommand(): {
-				const contextMenuHandler = CONTEXT_MENUS_COLLECTION.get(interaction.commandName);
+				const contextMenuHandler = CONTEXT_MENUS.find((menu) => menu.data.name === interaction.commandName);
 				if (!contextMenuHandler) return LOGGER.event.error(`${interactionID}: context menu not found.`);
 
 				handler = contextMenuHandler.execute.bind(null, interaction);

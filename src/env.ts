@@ -6,10 +6,6 @@ const DISCORD_ID_RE = /^\d{17,19}$/;
 
 const ENV_SCHEMA = v.pipeAsync(
 	v.objectAsync({
-		CLIENT_ID: v.pipe(
-			v.string('Expected `CLIENT_ID` to be a string.'),
-			v.regex(DISCORD_ID_RE, 'Expected `CLIENT_ID` to be a discord id.'),
-		),
 		SERVER_ID: v.pipe(
 			v.string('Expected `SERVEUR_ID` to be a string.'),
 			v.regex(DISCORD_ID_RE, 'Expected `SERVEUR_ID` to be a discord id.'),

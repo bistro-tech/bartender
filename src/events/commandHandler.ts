@@ -1,4 +1,5 @@
 import { Bot } from '@bot';
+import { COMMANDS_COLLECTION } from '@commands';
 import type { BotEvent } from '@events';
 import { LOGGER } from '@log';
 import { formatUser } from '@log/utils';
@@ -22,7 +23,7 @@ export const COMMAND_HANDLER: BotEvent = {
 		if (!interaction.inGuild()) return LOGGER.event.error(`'${commandName}' not executed in a guild by ${user}.`);
 		if (!interaction.isChatInputCommand()) return;
 
-		const command = interaction.client.COMMANDS.get(commandName);
+		const command = COMMANDS_COLLECTION.get(commandName);
 		if (!command) return LOGGER.event.debug(`${commandName}: command not found.`);
 
 		LOGGER.event.debug(`user ${user} executed '${interaction.toString()}'`);

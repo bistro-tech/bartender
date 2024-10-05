@@ -1,7 +1,7 @@
-import { COLLECTORS_COLLECTION } from '@collectors';
 import { COMMANDS_COLLECTION } from '@commands';
 import { CONTEXT_MENUS_COLLECTION } from '@contextmenus';
 import type { BotEvent } from '@events';
+import { COLLECTORS_COLLECTION } from '@listeners';
 import { LOGGER } from '@log';
 import { formatUser } from '@log/utils';
 import { getInteractionIdentifier } from '@utils/discord-interaction';

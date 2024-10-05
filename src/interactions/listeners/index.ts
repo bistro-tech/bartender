@@ -1,6 +1,6 @@
 import { Collection, type MappedInteractionTypes } from 'discord.js';
 
-import { CREATE_TICKET } from './createTicket';
+import { CREATE_TICKET } from './ticketCreation';
 
 export type Collector = {
 	[Type in keyof MappedInteractionTypes]: {

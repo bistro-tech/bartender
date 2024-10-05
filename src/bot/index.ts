@@ -5,7 +5,7 @@ import { LOGGER } from '@log';
 import type { ClientEvents, RESTPostAPIApplicationCommandsJSONBody } from 'discord.js';
 import { Client, GatewayIntentBits, Routes } from 'discord.js';
 
-import { Vitals } from './bot/vitals';
+import { Vitals } from './vitals';
 
 export class Bot extends Client {
 	// Initialized in the start method

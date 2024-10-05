@@ -7,8 +7,8 @@ import { TICKET_MENU_ID, TicketMenuMessage } from '@utils/tickets';
  * @listensTo   - ready
  * @description - Creates the message & menu used for tickets creation.
  */
-export const READY_SETUP_TICKETS_SYSTEM: BotEvent = {
-	name: 'Ready setup ticket system',
+export const SETUP_TICKETS_SYSTEM: BotEvent = {
+	name: 'Setup ticket system',
 	kind: 'ready',
 	once: true,
 	execute: async (client) => {

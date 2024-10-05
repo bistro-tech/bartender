@@ -8,8 +8,8 @@ import { roleToPing } from '@utils/discord-formats';
  * @listensTo   - ready
  * @description - Upon boot starts a 2hour timer and tells users to bump if not disabled before.
  */
-export const READY_BUMP_RECOVER: BotEvent = {
-	name: 'Ready bump recover',
+export const BUMP_RECOVER: BotEvent = {
+	name: 'Bump recover',
 	kind: 'ready',
 	once: true,
 	execute: async (client) => {

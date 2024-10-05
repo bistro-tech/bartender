@@ -46,7 +46,7 @@ export const Report: ContextMenu = {
 
 		return reportEmbed
 			.then(() => {
-				LOGGER.event.debug(`Reported message : '${interaction.targetMessage.url}'`);
+				LOGGER.interaction.debug(interaction, `Reported message : '${interaction.targetMessage.url}'`);
 
 				return reasonModalSubmit.reply({
 					content: 'Message signalé.',

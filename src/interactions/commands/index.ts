@@ -7,7 +7,7 @@ import { WARN } from './warn';
 
 export type Command = {
 	readonly data: SlashCommandOptionsOnlyBuilder;
-	readonly execute: (interaction: ChatInputCommandInteraction) => Promise<unknown>;
+	readonly execute: (interaction: ChatInputCommandInteraction<'cached'>) => Promise<unknown>;
 };
 
 export const COMMANDS_COLLECTION = new Collection([PING, LIST_BLAMES, WARN].map((c) => [c.data.name, c]));

@@ -38,7 +38,7 @@ export const WARN: Command = {
 				})
 				.setRequired(true),
 		),
-	async execute(interaction) {
+	execute: async (interaction) => {
 		const reason = interaction.options.getString('reason', true);
 		const warned = interaction.options.getUser('user', true);
 		const issuer = interaction.user;

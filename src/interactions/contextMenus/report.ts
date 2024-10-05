@@ -20,9 +20,12 @@ import {
 	TextInputStyle,
 } from 'discord.js';
 
+/**
+ * Menu used to report a user's message to the staff for bad behavior.
+ */
 export const Report: ContextMenu = {
 	data: new ContextMenuCommandBuilder().setName('Signaler').setType(ApplicationCommandType.Message),
-	async execute(interaction) {
+	execute: async (interaction) => {
 		if (!Bot.isBot(interaction.client)) return LOGGER.interaction.fatal(interaction, 'Client is not a Bot. WTF?');
 		if (!interaction.isMessageContextMenuCommand()) {
 			return logErrorAndReply(interaction, 'Cette commande ne peut être utilisée que sur un message.');

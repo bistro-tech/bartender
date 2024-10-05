@@ -1,4 +1,5 @@
 import { Bot } from '@bot';
+import { CONTEXT_MENUS_COLLECTION } from '@contextmenus';
 import type { BotEvent } from '@events';
 import { LOGGER } from '@log';
 import { formatUser } from '@log/utils';
@@ -14,7 +15,7 @@ export const CONTEXT_MENU_HANDLER: BotEvent = {
 	async execute(interaction) {
 		if (!Bot.isBot(interaction.client)) return LOGGER.event.fatal('Client is not a Bot. WTF?');
 		if (!interaction.isContextMenuCommand()) return;
-		const contextMenuHandler = interaction.client.CONTEXT_MENUS.get(interaction.commandName);
+		const contextMenuHandler = CONTEXT_MENUS_COLLECTION.get(interaction.commandName);
 
 		if (!contextMenuHandler) return LOGGER.event.debug(`${interaction.commandName}: context menu not found.`);
 

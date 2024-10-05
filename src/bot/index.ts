@@ -1,5 +1,5 @@
-import { COMMANDS_COLLECTION } from '@commands';
-import { CONTEXT_MENUS_COLLECTION } from '@contextmenus';
+import { COMMANDS } from '@commands';
+import { CONTEXT_MENUS } from '@contextmenus';
 import { EVENTS } from '@events';
 import { LOGGER } from '@log';
 import type { ClientEvents, RESTPostAPIApplicationCommandsJSONBody } from 'discord.js';
@@ -81,15 +81,15 @@ export class Bot extends Client {
 		if (!this.isReady()) return LOGGER.internal.fatal("Bot isn't logged in.");
 
 		LOGGER.internal.debug(`Registering bot interactions in '${this.vitals.server.name}'.`);
-		const body = COMMANDS_COLLECTION.each((cmd) =>
-			LOGGER.internal.debug(`  Registering (/) command '${cmd.data.name}'.`),
-		)
-			.map<RESTPostAPIApplicationCommandsJSONBody>((cmd) => cmd.data.toJSON())
-			.concat(
-				CONTEXT_MENUS_COLLECTION.each((cmd) =>
-					LOGGER.internal.debug(`  Registering contextMenu '${cmd.data.name}'.`),
-				).map<RESTPostAPIApplicationCommandsJSONBody>((cmd) => cmd.data.toJSON()),
-			);
+		const body = COMMANDS.map<RESTPostAPIApplicationCommandsJSONBody>((cmd) => {
+			LOGGER.internal.debug(`  Registering (/) command '${cmd.data.name}'.`);
+			return cmd.data.toJSON();
+		}).concat(
+			CONTEXT_MENUS.map<RESTPostAPIApplicationCommandsJSONBody>((cmd) => {
+				LOGGER.internal.debug(`  Registering contextMenu '${cmd.data.name}'.`);
+				return cmd.data.toJSON();
+			}),
+		);
 
 		const url = Routes.applicationGuildCommands(this.application.id, this.vitals.server.id);
 		await this.rest.put(url, { body });

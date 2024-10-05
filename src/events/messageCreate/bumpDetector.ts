@@ -9,8 +9,8 @@ import { InteractionType } from 'discord.js';
  * @listensTo   - messageCreate
  * @description - Emitted when a message is created.
  */
-export const MESSAGE_BUMP: BotEvent = {
-	name: 'Message create bump',
+export const BUMP_DETECTOR: BotEvent = {
+	name: 'Bump detector',
 	kind: 'messageCreate',
 	once: false,
 	// Clearly imperfect filter, but discord seems to have removed all good ways

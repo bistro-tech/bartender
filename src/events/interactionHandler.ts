@@ -4,6 +4,7 @@ import type { BotEvent } from '@events';
 import { LISTENERS, type SpecificListener } from '@listeners';
 import { LOGGER } from '@log';
 import { formatUser } from '@log/utils';
+import { MODALS_LISTENERS } from '@modals';
 import { ComponentType, type Interaction, InteractionType } from 'discord.js';
 import { ResultAsync } from 'neverthrow';
 
@@ -58,6 +59,15 @@ export const INTERACTION_HANDLER: BotEvent = {
 				LOGGER.event.debug(`user ${user} executed ${interactionID}.`);
 
 				handler = contextMenuHandler.execute.bind(null, interaction);
+				break;
+			}
+			case interaction.isModalSubmit(): {
+				const modalHandler = MODALS_LISTENERS.find((modal) => modal.customID === interaction.customId);
+				if (!modalHandler) return LOGGER.event.debug(`${interactionID}: context menu not found.`);
+
+				LOGGER.event.debug(`user ${user} executed ${interactionID}.`);
+
+				handler = modalHandler.execute.bind(null, interaction);
 				break;
 			}
 			default:

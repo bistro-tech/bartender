@@ -23,13 +23,11 @@ import {
 /**
  * Menu used to report a user's message to the staff for bad behavior.
  */
-export const Report: ContextMenu = {
+export const REPORT: ContextMenu = {
+	kind: ApplicationCommandType.Message,
 	data: new ContextMenuCommandBuilder().setName('Signaler').setType(ApplicationCommandType.Message),
 	execute: async (interaction) => {
 		if (!Bot.isBot(interaction.client)) return LOGGER.interaction.fatal(interaction, 'Client is not a Bot. WTF?');
-		if (!interaction.isMessageContextMenuCommand()) {
-			return logErrorAndReply(interaction, 'Cette commande ne peut être utilisée que sur un message.');
-		}
 
 		const moderationChannel = interaction.client.vitals.moderationChannel;
 

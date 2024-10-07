@@ -1,5 +1,5 @@
 import { COMMANDS } from '@commands';
-import { CONTEXT_MENUS } from '@contextmenus';
+import { CONTEXT_MENUS, type SpecificContextMenu } from '@contextmenus';
 import type { BotEvent } from '@events';
 import { LISTENERS, type SpecificListener } from '@listeners';
 import { LOGGER } from '@log';
@@ -46,7 +46,11 @@ export const INTERACTION_HANDLER: BotEvent = {
 				break;
 			}
 			case interaction.isContextMenuCommand(): {
-				const contextMenuHandler = CONTEXT_MENUS.find((menu) => menu.data.name === interaction.commandName);
+				type ContextMenuKind = SpecificContextMenu<typeof interaction.commandType>;
+				const contextMenuHandler = CONTEXT_MENUS.find(
+					(menu): menu is ContextMenuKind =>
+						menu.kind === interaction.commandType && menu.data.name === interaction.commandName,
+				);
 				if (!contextMenuHandler) return LOGGER.event.error(`${interactionID}: context menu not found.`);
 
 				handler = contextMenuHandler.execute.bind(null, interaction);

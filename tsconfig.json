@@ -13,6 +13,7 @@
 			"@listeners": ["./src/interactions/listeners"],
 			"@log": ["./src/log"],
 			"@log/utils": ["./src/log/utils"],
+			"@modals": ["./src/interactions/modals"],
 			"@utils/*": ["./src/utils/*"]
 		}
 	},

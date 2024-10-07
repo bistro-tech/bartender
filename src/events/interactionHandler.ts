@@ -1,9 +1,10 @@
-import { COLLECTORS_COLLECTION } from '@collectors';
-import { COMMANDS_COLLECTION } from '@commands';
-import { CONTEXT_MENUS_COLLECTION } from '@contextmenus';
+import { COMMANDS } from '@commands';
+import { CONTEXT_MENUS, type SpecificContextMenu } from '@contextmenus';
 import type { BotEvent } from '@events';
+import { LISTENERS, type SpecificListener } from '@listeners';
 import { LOGGER } from '@log';
 import { formatUser } from '@log/utils';
+import { MODALS_LISTENERS } from '@modals';
 import { ComponentType, type Interaction, InteractionType } from 'discord.js';
 import { ResultAsync } from 'neverthrow';
 
@@ -26,7 +27,7 @@ export const INTERACTION_HANDLER: BotEvent = {
 		let handler: () => Promise<unknown>;
 		switch (true) {
 			case interaction.isChatInputCommand(): {
-				const command = COMMANDS_COLLECTION.get(interaction.commandName);
+				const command = COMMANDS.find(({ data: { name } }) => name === interaction.commandName);
 				if (!command) return LOGGER.event.debug(`${interactionID}: command not found.`);
 
 				LOGGER.event.debug(`user ${user} executed ${interactionID}.`);
@@ -35,22 +36,38 @@ export const INTERACTION_HANDLER: BotEvent = {
 				break;
 			}
 			case interaction.isAnySelectMenu(): {
-				const collector = COLLECTORS_COLLECTION.get(interaction.customId);
+				type ListenerKind = SpecificListener<typeof interaction.componentType>;
+				const collector = LISTENERS.find(
+					(listener): listener is ListenerKind =>
+						listener.trigger === interaction.componentType && listener.customID === interaction.customId,
+				);
 				if (!collector) return LOGGER.event.debug(`${interactionID}: collector not found.`);
 
 				LOGGER.event.debug(`user ${user} triggered ${interactionID} collector.`);
 
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				handler = collector.execute.bind(null, interaction as any);
+				handler = collector.execute.bind(null, interaction);
 				break;
 			}
 			case interaction.isContextMenuCommand(): {
-				const contextMenuHandler = CONTEXT_MENUS_COLLECTION.get(interaction.commandName);
+				type ContextMenuKind = SpecificContextMenu<typeof interaction.commandType>;
+				const contextMenuHandler = CONTEXT_MENUS.find(
+					(menu): menu is ContextMenuKind =>
+						menu.kind === interaction.commandType && menu.data.name === interaction.commandName,
+				);
 				if (!contextMenuHandler) return LOGGER.event.debug(`${interactionID}: context menu not found.`);
 
 				LOGGER.event.debug(`user ${user} executed ${interactionID}.`);
 
 				handler = contextMenuHandler.execute.bind(null, interaction);
+				break;
+			}
+			case interaction.isModalSubmit(): {
+				const modalHandler = MODALS_LISTENERS.find((modal) => modal.customID === interaction.customId);
+				if (!modalHandler) return LOGGER.event.debug(`${interactionID}: context menu not found.`);
+
+				LOGGER.event.debug(`user ${user} executed ${interactionID}.`);
+
+				handler = modalHandler.execute.bind(null, interaction);
 				break;
 			}
 			default:

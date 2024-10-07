@@ -1,2 +1,5 @@
 telemetry = false
 logLevel = "warn" # "debug" | "warn" | "error"
+
+[test]
+preload = ["./.globals.mock"]

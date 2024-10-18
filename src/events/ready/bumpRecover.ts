@@ -6,10 +6,10 @@ import { roleToPing } from '@utils/discord-formats';
 
 /**
  * @listensTo   - ready
- * @description - Upon boot starts a 2hour timer and tells users to bump if not disabled before.
+ * @description - Upon boot check when was the last message in bump channel to remind users to bump the server.
  */
-export const READY_BUMP_RECOVER: BotEvent = {
-	name: 'Ready bump recover',
+export const BUMP_RECOVER: BotEvent = {
+	name: 'Bump recover',
 	kind: 'ready',
 	once: true,
 	execute: async (client) => {
@@ -29,11 +29,7 @@ export const READY_BUMP_RECOVER: BotEvent = {
 			// BUMP_COOLDOWN after the latest message.
 			const rebootCooldown = BUMP_COOLDOWN - timeSinceLastMessage;
 			LOGGER.event.debug(`I rebooted, triggering a bump reminder in ${rebootCooldown / 60_000}min.`);
-			setTimeout(async () => {
-				if (!client.bumpBootReminder) return;
-
-				await bumpChannel.send(notifMessage);
-			}, rebootCooldown);
+			setTimeout(() => client.bumpBootReminder && bumpChannel.send(notifMessage), rebootCooldown);
 		}
 	},
 };

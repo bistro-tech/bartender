@@ -7,10 +7,10 @@ import { InteractionType } from 'discord.js';
 
 /**
  * @listensTo   - messageCreate
- * @description - Emitted when a message is created.
+ * @description - Detects when a user uses disboard's /bump and reminds 2hours later to do it again.
  */
-export const MESSAGE_BUMP: BotEvent = {
-	name: 'Message create bump',
+export const BUMP_DETECTOR: BotEvent = {
+	name: 'Bump detector',
 	kind: 'messageCreate',
 	once: false,
 	// Clearly imperfect filter, but discord seems to have removed all good ways
@@ -34,8 +34,9 @@ export const MESSAGE_BUMP: BotEvent = {
 		message.client.bumpBootReminder = false;
 
 		LOGGER.event.debug(`Next bump reminder at ${new Date(new Date().getTime() + BUMP_COOLDOWN).toLocaleString()}`);
-		setTimeout(async () => {
-			await message.channel.send(`${roleToPing(bumpRole)} Il est temps de bump le serveur !`);
-		}, BUMP_COOLDOWN);
+		setTimeout(
+			() => message.channel.send(`${roleToPing(bumpRole)} Il est temps de bump le serveur !`),
+			BUMP_COOLDOWN,
+		);
 	},
 };

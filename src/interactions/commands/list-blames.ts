@@ -26,7 +26,7 @@ export const LIST_BLAMES: Command = {
 				.setDescription('The other user you want to see the warns of.')
 				.setRequired(false),
 		),
-	async execute(interaction) {
+	execute: async (interaction) => {
 		const user = interaction.options.getUser('other_user', false) ?? interaction.user;
 
 		LOGGER.interaction.debug(

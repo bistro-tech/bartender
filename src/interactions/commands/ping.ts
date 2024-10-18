@@ -7,7 +7,7 @@ import { SlashCommandBuilder } from 'discord.js';
  */
 export const PING: Command = {
 	data: new SlashCommandBuilder().setName('ping').setDescription('Replies with Pong!'),
-	execute(interaction) {
+	execute: (interaction) => {
 		const luck = Math.random();
 		switch (true) {
 			case luck < 0.01:

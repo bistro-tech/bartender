@@ -1,0 +1,138 @@
+{
+	"version": "6",
+	"dialect": "sqlite",
+	"id": "fa4dca34-c21c-4d4d-80c4-80f33f22b7fe",
+	"prevId": "d1ad14b7-fa70-4bd2-b2fa-275314a37ef2",
+	"tables": {
+		"blame": {
+			"name": "blame",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "integer",
+					"primaryKey": true,
+					"notNull": true,
+					"autoincrement": true
+				},
+				"reason": {
+					"name": "reason",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"kind": {
+					"name": "kind",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false,
+					"default": "(unixepoch())"
+				},
+				"updated_at": {
+					"name": "updated_at",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false,
+					"default": "(unixepoch())"
+				},
+				"expires_at": {
+					"name": "expires_at",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"blamee_id": {
+					"name": "blamee_id",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"blamer_id": {
+					"name": "blamer_id",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"blame_blamee_id_user_id_fk": {
+					"name": "blame_blamee_id_user_id_fk",
+					"tableFrom": "blame",
+					"tableTo": "user",
+					"columnsFrom": ["blamee_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "restrict"
+				},
+				"blame_blamer_id_user_id_fk": {
+					"name": "blame_blamer_id_user_id_fk",
+					"tableFrom": "blame",
+					"tableTo": "user",
+					"columnsFrom": ["blamer_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "restrict"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"checkConstraints": {
+				"self_blame_check": {
+					"name": "self_blame_check",
+					"value": "'blamee_id' != 'blamer_id'"
+				},
+				"blame_kind_check": {
+					"name": "blame_kind_check",
+					"value": "'kind' IN (\"BAN\",\"WARN\",\"KICK\",\"TIMEOUT\")"
+				}
+			}
+		},
+		"user": {
+			"name": "user",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "text",
+					"primaryKey": true,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"display_name": {
+					"name": "display_name",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"checkConstraints": {}
+		}
+	},
+	"views": {},
+	"enums": {},
+	"_meta": {
+		"schemas": {},
+		"tables": {},
+		"columns": {}
+	},
+	"internal": {
+		"indexes": {}
+	}
+}

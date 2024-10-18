@@ -1,4 +1,5 @@
 import { Bot } from '@bot';
+import { COLLECTORS_COLLECTION } from '@collectors';
 import type { BotEvent } from '@events';
 import { LOGGER } from '@log';
 import { formatUser } from '@log/utils';
@@ -19,7 +20,7 @@ export const COLLECTOR_HANDLER: BotEvent = {
 		const { customId, user: discord_user } = interaction;
 		const user = formatUser(discord_user);
 
-		const collector = interaction.client.COLLECTORS.get(customId);
+		const collector = COLLECTORS_COLLECTION.get(customId);
 		if (!collector) return LOGGER.event.debug(`${customId}: collector not found.`);
 
 		LOGGER.event.debug(`user ${user} triggered '${customId}' collector.`);
@@ -27,7 +28,7 @@ export const COLLECTOR_HANDLER: BotEvent = {
 		// OK while we only have one collector, will be fixed right after
 		const maybeErr = await ResultAsync.fromPromise(
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-			collector.execute(interaction.client as Bot, interaction as any),
+			collector.execute(interaction as any),
 			(e) => e,
 		);
 		if (maybeErr.isErr()) {

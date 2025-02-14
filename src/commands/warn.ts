@@ -5,6 +5,7 @@ import { LOGGER } from '@log';
 import { formatUser } from '@log/utils';
 import { userToPing } from '@utils/discord-formats';
 import { SlashCommandBuilder } from 'discord.js';
+import { sql } from 'drizzle-orm';
 import { ResultAsync } from 'neverthrow';
 
 /**
@@ -69,7 +70,7 @@ export const WARN: Command = {
 					{ id: warned.id, display_name: warned.displayName },
 					{ id: issuer.id, display_name: issuer.displayName },
 				])
-				.onConflictDoUpdate({ target: discord_user.id, set: { display_name: warned.displayName } }),
+				.onConflictDoUpdate({ target: discord_user.id, set: { display_name: sql`excluded.display_name` } }),
 			(err) => ({ err, message: `Error when creating users ${formatUser(warned)} or ${formatUser(issuer)}.` }),
 		);
 		const blameInsert = ResultAsync.fromPromise(

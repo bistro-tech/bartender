@@ -8,13 +8,6 @@
 			"when": 1724529199263,
 			"tag": "0000_hot_mentor",
 			"breakpoints": true
-		},
-		{
-			"idx": 1,
-			"version": "6",
-			"when": 1729281346037,
-			"tag": "0001_slippery_leech",
-			"breakpoints": true
 		}
 	]
 }

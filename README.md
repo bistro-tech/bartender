@@ -10,7 +10,7 @@ The database details can be found [here](./docs/DATABASE.md).
 
 ### Prerequisites
 
--   [bun](https://bun.sh/) - Bun is a simple command line tool to manage npm packages. We use v1.1.20.
+- [bun](https://bun.sh/) - Bun is a simple command line tool to manage npm packages. We use v1.1.20.
 
 ### Installing
 

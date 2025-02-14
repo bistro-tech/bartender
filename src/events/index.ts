@@ -1,12 +1,10 @@
 import type { ClientEvents } from 'discord.js';
 
-import { COLLECTOR_HANDLER } from './collectorHandler';
-import { COMMAND_HANDLER } from './commandHandler';
-import { CONTEXT_MENU_HANDLER } from './contextMenuHandler';
-import { MESSAGE_BUMP } from './messageCreateBump';
-import { READY } from './ready';
-import { READY_BUMP_RECOVER } from './readyBumpRecover';
-import { READY_SETUP_TICKETS_SYSTEM } from './readySetupTicketSystem';
+import { INTERACTION_HANDLER } from './interactionHandler';
+import { BUMP_DETECTOR } from './messageCreate/bumpDetector';
+import { BUMP_RECOVER } from './ready/bumpRecover';
+import { SETUP_TICKETS_SYSTEM } from './ready/setupTickets';
+import { SHOUTOUT } from './ready/shoutout';
 
 export type BotEvent = {
 	[Event in keyof ClientEvents]: {
@@ -18,11 +16,12 @@ export type BotEvent = {
 }[keyof ClientEvents];
 
 export const EVENTS: Array<BotEvent> = [
-	READY,
-	MESSAGE_BUMP,
-	COMMAND_HANDLER,
-	CONTEXT_MENU_HANDLER,
-	READY_SETUP_TICKETS_SYSTEM,
-	READY_BUMP_RECOVER,
-	COLLECTOR_HANDLER,
+	// ready
+	SHOUTOUT,
+	SETUP_TICKETS_SYSTEM,
+	BUMP_RECOVER,
+	// interactionCreate
+	INTERACTION_HANDLER,
+	// messageCreate
+	BUMP_DETECTOR,
 ];

@@ -8,12 +8,13 @@ export const REPORT: Modal</* fromMessage */ true> = {
 	customID: 'report',
 	execute: async (interaction) => {
 		if (!Bot.isBot(interaction.client)) return LOGGER.interaction.fatal(interaction, 'Client is not a Bot. WTF?');
+
 		const reason = interaction.fields.getTextInputValue('report_reason');
 		const moderationChannel = interaction.client.vitals.moderationChannel;
 
-		const report_message = message(reason, interaction);
-		await moderationChannel.send(report_message);
+		await moderationChannel.send(buildReportMessage(reason, interaction));
 		LOGGER.interaction.debug(interaction, `Reported message : '${interaction.message.url}'`);
+
 		return interaction.reply({
 			content: 'Message signalé.',
 			ephemeral: true,
@@ -27,7 +28,7 @@ export const REPORT: Modal</* fromMessage */ true> = {
  * @param {ModalMessageModalSubmitInteraction} interaction - The interaction to build the embed from.
  * @returns {MessageCreateOptions} - A promise that resolves to true if the embed was sent successfully.
  */
-function message(
+function buildReportMessage(
 	reason: string,
 	{ message, user }: ModalMessageModalSubmitInteraction<'cached'>,
 ): MessageCreateOptions {

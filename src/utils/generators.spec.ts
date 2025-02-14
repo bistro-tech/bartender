@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable jsdoc/require-jsdoc */
 import { describe, expect, it } from 'bun:test';
 
@@ -48,7 +47,7 @@ describe('mapGenerator', () => {
 
 	it('should work with empty generator', () => {
 		// eslint-disable-next-line @typescript-eslint/no-empty-function
-		function* emptyGenerator() {}
+		function* emptyGenerator(): Generator<never, void, unknown> {}
 
 		const mapped = Array.from(mapGenerator(emptyGenerator(), (x) => x * 2));
 		expect(mapped).toEqual([]);

@@ -59,7 +59,7 @@ export const INTERACTION_HANDLER: BotEvent = {
 			}
 			case interaction.isModalSubmit(): {
 				const modalHandler = MODALS_LISTENERS.find((modal) => modal.customID === interaction.customId);
-				if (!modalHandler) return LOGGER.event.error(`${interactionID}: context menu not found.`);
+				if (!modalHandler) return LOGGER.event.error(`${interactionID}: modal not found.`);
 
 				handler = modalHandler.execute.bind(null, interaction);
 				break;

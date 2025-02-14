@@ -1,4 +1,4 @@
-import { ENV } from '@env';
+import { Bot } from '@bot';
 import type { BotEvent } from '@events';
 import { LOGGER } from '@log';
 import { TICKET_MENU_ID, TicketMenuMessage } from '@utils/tickets';
@@ -12,14 +12,8 @@ export const READY_SETUP_TICKETS_SYSTEM: BotEvent = {
 	kind: 'ready',
 	once: true,
 	execute: async (client) => {
-		const server = client.guilds.cache.get(ENV.SERVER_ID);
-		if (!server) return LOGGER.event.fatal(`Client doesn't have access to guild ${ENV.SERVER_ID}`);
-
-		const ticketSetupChannel = await server.channels.fetch(ENV.TICKET_INIT_CHANNEL_ID);
-		if (!ticketSetupChannel)
-			return LOGGER.event.error(`Could not find Ticket init channel (${ENV.TICKET_INIT_CHANNEL_ID}) upon boot !`);
-		if (!ticketSetupChannel.isTextBased())
-			return LOGGER.event.error(`Ticket init channel (${ENV.TICKET_INIT_CHANNEL_ID}) is not text based ??`);
+		if (!Bot.isBot(client)) return LOGGER.event.fatal('Client is not a Bot. WTF?');
+		const ticketSetupChannel = client.vitals.ticketInit;
 
 		const [lastMessage] = await ticketSetupChannel.messages.fetch({ limit: 1 });
 		const setupMessageExists = lastMessage?.[1].components /* rows */

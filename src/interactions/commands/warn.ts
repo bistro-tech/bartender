@@ -38,45 +38,43 @@ export const WARN: Command = {
 				})
 				.setRequired(true),
 		),
-	async execute(interaction) {
+	execute: async (interaction) => {
 		const reason = interaction.options.getString('reason', true);
-		const warned = interaction.options.getUser('user', true);
-		const issuer = interaction.user;
+		const warner = interaction.user;
+		const warnerLog = formatUser(warner);
+		const warned = interaction.options.getMember('user');
+		if (!warned) return LOGGER.interaction.fatal(interaction, "Warning a user that doesn't exists??");
+		const warnedLog = formatUser(warned.user);
 
-		LOGGER.interaction.debug(
-			interaction,
-			`${formatUser(issuer)} tries to warn ${formatUser(warned)} because: '${reason}'.`,
-		);
-
-		if (warned.id === issuer.id) {
-			await LOGGER.interaction.warn(interaction, `${issuer.displayName} tried to warn himself, what an moron.`);
-			return interaction.reply("You can't warn yourself.");
+		switch (true) {
+			case warned.id === warner.id:
+				await LOGGER.interaction.warn(interaction, `${warnerLog} tried to warn himself, what an moron.`);
+				return interaction.reply("T'es maso ou quoi?");
+			case warned.user.bot:
+				await LOGGER.interaction.warn(interaction, `${warnerLog} tried to warn a bot, what an moron.`);
+				return interaction.reply('Un bot est toujours parfait, on le vire sinon!');
+			case warned.permissions.has('Administrator'):
+				await LOGGER.interaction.warn(interaction, `${warnerLog} tried to warn an admin, what an moron.`);
+				return interaction.reply('Un bot est toujours parfait, tu oses en douter?');
+			default:
+				break;
 		}
 
-		if (warned.bot) {
-			await LOGGER.interaction.warn(interaction, `${issuer.displayName} tried to warn a bot, what an moron.`);
-			return interaction.reply("You can't warn a bot.");
-		}
-
-		const member = await interaction.guild?.members.fetch(warned.id);
-		if (member?.permissions.has('Administrator')) {
-			await LOGGER.interaction.warn(interaction, `${issuer.displayName} tried to warn an admin, what an moron.`);
-			return interaction.reply('An admin is always perfect, I dare you to think otherwise.');
-		}
+		LOGGER.interaction.debug(interaction, `${warnerLog} warns ${warnedLog} because: '${reason}'.`);
 
 		const userCreation = ResultAsync.fromPromise(
 			DB.insert(discord_user)
 				.values([
 					{ id: warned.id, display_name: warned.displayName },
-					{ id: issuer.id, display_name: issuer.displayName },
+					{ id: warner.id, display_name: warner.displayName },
 				])
 				.onConflictDoUpdate({ target: discord_user.id, set: { display_name: sql`excluded.display_name` } }),
-			(err) => ({ err, message: `Error when creating users ${formatUser(warned)} or ${formatUser(issuer)}.` }),
+			(err) => ({ err, message: `Error when creating users ${warnedLog} or ${warnerLog}.` }),
 		);
 		const blameInsert = ResultAsync.fromPromise(
 			DB.insert(blame).values({
 				blamee_id: warned.id,
-				blamer_id: issuer.id,
+				blamer_id: warner.id,
 				reason,
 				kind: 'WARN',
 			}),
@@ -90,9 +88,9 @@ export const WARN: Command = {
 			return interaction.reply('Une erreur est survenue, merci de check les logs.');
 		}
 
-		LOGGER.interaction.debug(interaction, `${formatUser(warned)} got warned for '${reason}'.`);
+		LOGGER.interaction.debug(interaction, `${warnedLog} got warned for '${reason}'.`);
 		return interaction.reply(`
-			${userToPing(warned)} tu viens d'être warn par ${userToPing(issuer)} pour la raison suivante:
+			${userToPing(warned.user)} tu viens d'être warn par ${userToPing(warner)} pour la raison suivante:
 			> ${reason}
 			Tache de faire mieux la prochaine fois.
 		`);

@@ -55,7 +55,7 @@ export const WARN: Command = {
 				return interaction.reply('Un bot est toujours parfait, on le vire sinon!');
 			case warned.permissions.has('Administrator'):
 				await LOGGER.interaction.warn(interaction, `${warnerLog} tried to warn an admin, what an moron.`);
-				return interaction.reply('Un bot est toujours parfait, tu oses en douter?');
+				return interaction.reply('Un Administrateur est toujours parfait, tu oses en douter?');
 			default:
 				break;
 		}
@@ -89,10 +89,10 @@ export const WARN: Command = {
 		}
 
 		LOGGER.interaction.debug(interaction, `${warnedLog} got warned for '${reason}'.`);
-		return interaction.reply(`
-			${userToPing(warned.user)} tu viens d'être warn par ${userToPing(warner)} pour la raison suivante:
-			> ${reason}
-			Tache de faire mieux la prochaine fois.
-		`);
+		return interaction.reply(
+			`${userToPing(warned.user)} tu viens d'être warn par ${userToPing(warner)} pour la raison suivante:` +
+				`> ${reason}` +
+				`Tache de faire mieux la prochaine fois.`,
+		);
 	},
 };

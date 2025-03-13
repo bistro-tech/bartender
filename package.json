@@ -15,9 +15,9 @@
 	},
 	"dependencies": {
 		"discord.js": "14.18.0",
-		"drizzle-orm": "0.39.3",
-		"neverthrow": "8.1.1",
-		"valibot": "1.0.0-rc.0"
+		"drizzle-orm": "0.40.0",
+		"neverthrow": "8.2.0",
+		"valibot": "1.0.0-rc.4"
 	},
 	"devDependencies": {
 		"@softwaretechnik/dbml-renderer": "1.0.30",
@@ -25,15 +25,15 @@
 		"@vic1707/eslint-config": "7.1.1",
 		"@vic1707/prettier": "4.0.1",
 		"@vic1707/tsconfig": "5.0.5",
-		"bun-types": "1.2.2",
+		"bun-types": "1.2.5",
 		"drizzle-dbml-generator": "0.10.0",
-		"drizzle-kit": "0.30.4",
+		"drizzle-kit": "0.30.5",
 		"eslint": "9.11.1",
 		"eslint-plugin-drizzle": "0.2.3",
-		"prettier": "3.5.1"
+		"prettier": "3.5.3"
 	},
 	"peerDependencies": {
-		"typescript": "^5.7.3"
+		"typescript": "5.8.2"
 	},
 	"prettier": "@vic1707/prettier"
 }

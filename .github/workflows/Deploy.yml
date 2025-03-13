@@ -70,11 +70,13 @@ jobs:
                       fi
 
                       # ensure needed folder exists
-                      mkdir -p dbs/backups
                       chmod -R 777 dbs
 
                       # make a backup of the current DB just in case
-                      cp ${{ env.DB_FOLDER }}/${{ env.DB_FILENAME }} ${{ env.DB_FOLDER }}/backups/${{ env.DB_FILENAME }}-${{ steps.date.outputs.DATE }}
+                      if test -f ${{ env.DB_FOLDER }}/${{ env.DB_FILENAME }}; then
+                        mkdir -p ${{ env.DB_FOLDER }}/backups
+                      	cp ${{ env.DB_FOLDER }}/${{ env.DB_FILENAME }} ${{ env.DB_FOLDER }}/backups/${{ env.DB_FILENAME }}-${{ steps.date.outputs.DATE }}
+                      fi
                   SCRIPT_AFTER: |
                       podman load -i ${{ env.HOME_DIR }}/bartender-builds/${{ env.IMG_NAME }}-${{ steps.date.outputs.DATE }}.tar
                       podman run \

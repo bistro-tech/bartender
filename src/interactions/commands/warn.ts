@@ -91,8 +91,8 @@ export const WARN: Command = {
 		LOGGER.interaction.debug(interaction, `${warnedLog} got warned for '${reason}'.`);
 		return interaction.reply(
 			`${userToPing(warned.user)} tu viens d'être warn par ${userToPing(warner)} pour la raison suivante:` +
-				`> ${reason}` +
-				`Tache de faire mieux la prochaine fois.`,
+				`\n> ${reason}` +
+				`\nTache de faire mieux la prochaine fois.`,
 		);
 	},
 };

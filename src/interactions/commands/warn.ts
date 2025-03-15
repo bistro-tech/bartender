@@ -38,6 +38,7 @@ export const WARN: Command = {
 				})
 				.setRequired(true),
 		),
+	canRun: ({ member: { permissions } }) => permissions.has('ModerateMembers'),
 	execute: async (interaction) => {
 		const reason = interaction.options.getString('reason', true);
 		const warner = interaction.user;

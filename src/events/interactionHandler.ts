@@ -32,6 +32,8 @@ export const INTERACTION_HANDLER: BotEvent = {
 				const command = COMMANDS.find(({ data: { name } }) => name === interaction.commandName);
 				if (!command) return LOGGER.event.error(`${interactionID}: command not found.`);
 
+				if (command.canRun?.(interaction)) return;
+
 				handler = command.execute.bind(null, interaction);
 				break;
 			}

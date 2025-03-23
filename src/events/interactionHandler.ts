@@ -32,6 +32,14 @@ export const INTERACTION_HANDLER: BotEvent = {
 				const command = COMMANDS.find(({ data: { name } }) => name === interaction.commandName);
 				if (!command) return LOGGER.event.error(`${interactionID}: command not found.`);
 
+				if (command.canRun?.(interaction)) {
+					await interaction.reply("Tu n'as pas le droit d'utiliser cette commande.");
+					return LOGGER.interaction.error(
+						interaction,
+						`${user}: tried to run ${interaction.commandName} but isn't allowed to`,
+					);
+				}
+
 				handler = command.execute.bind(null, interaction);
 				break;
 			}
